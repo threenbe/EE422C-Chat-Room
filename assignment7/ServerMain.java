@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
@@ -18,7 +19,7 @@ public class ServerMain extends Observable {
 
 	private void setUpNetworking() throws Exception {
 		@SuppressWarnings("resource")
-		ServerSocket serverSocket = new ServerSocket(4242);
+		ServerSocket serverSocket = new ServerSocket(5000);
 		while (true) {
 			// make a new thread for managing each client connection
 			Socket clientSocket = serverSocket.accept();
@@ -38,6 +39,8 @@ public class ServerMain extends Observable {
 							notifyObservers(message);
 							message = reader.readLine();
 						}
+					} catch (SocketException e) {
+						System.out.println("Client disconnected!");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
