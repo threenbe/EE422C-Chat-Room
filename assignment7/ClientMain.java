@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class ClientMain extends Application {
+	
 	private BufferedReader reader;
 	private PrintWriter writer;
 	
@@ -85,14 +87,21 @@ public class ClientMain extends Application {
 						message = client.reader.readLine();
 						while (message != null) {
 							// TODO make this append instead
-							input.setText(message + "\n");
+							final String msg = message;
+							Platform.runLater(new Runnable(){
+								@Override
+								public void run() {
+									input.setText(msg);
+								}
+							});
+							
 							message = client.reader.readLine();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-			});
+			}).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

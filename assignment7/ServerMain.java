@@ -34,7 +34,6 @@ public class ServerMain extends Observable {
 								new InputStreamReader(clientSocket.getInputStream()));
 						message = reader.readLine();
 						while (message != null) {
-							System.out.println("message was read by server");
 							setChanged();
 							notifyObservers(message);
 							message = reader.readLine();
@@ -46,7 +45,7 @@ public class ServerMain extends Observable {
 					}
 				}
 			}).start();
-			addObserver(writer);
+			this.addObserver(writer);
 		}
 	}
 }
