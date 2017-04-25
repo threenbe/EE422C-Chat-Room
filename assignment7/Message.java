@@ -2,6 +2,6 @@ package assignment7;
 
 public class Message {
 	int chatroomNum;
-	User user; // user that sent the message
+	int userNum; // user that sent the message
 	String msg;
 }

@@ -6,9 +6,18 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
+	private HashMap<Integer, User> passwordList;
+	private ArrayList<User> users;
+	private ArrayList<Chatroom> chatrooms;
+	
+	private int usersCount = 0;
+	private int chatroomsCount = 0;
+	
 	public static void main(String[] args) {
 		try {
 			new ServerMain().setUpNetworking();	
@@ -18,6 +27,12 @@ public class ServerMain extends Observable {
 	}
 
 	private void setUpNetworking() throws Exception {
+		// other inits
+		passwordList = new HashMap<Integer, User>();
+		users = new ArrayList<User>();
+		chatrooms = new ArrayList<Chatroom>();
+		
+		
 		@SuppressWarnings("resource")
 		ServerSocket serverSocket = new ServerSocket(5000);
 		while (true) {
@@ -34,6 +49,7 @@ public class ServerMain extends Observable {
 								new InputStreamReader(clientSocket.getInputStream()));
 						message = reader.readLine();
 						while (message != null) {
+							processMessage(message); // TODO
 							setChanged();
 							notifyObservers(message);
 							message = reader.readLine();
@@ -47,5 +63,8 @@ public class ServerMain extends Observable {
 			}).start();
 			this.addObserver(writer);
 		}
+	}
+	private void processMessage(String message) {
+		
 	}
 }
