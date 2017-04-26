@@ -16,7 +16,7 @@ public class ServerMain extends Observable {
 	private static ArrayList<User> users;
 	private static ArrayList<Chatroom> chatrooms;
 	
-	private int usersCount = 0;
+	private int usersCount = -1;
 	private int chatroomsCount = 0;
 	
 	public static void main(String[] args) {

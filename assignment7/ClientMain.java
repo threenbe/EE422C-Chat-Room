@@ -225,6 +225,7 @@ public class ClientMain extends Application {
 		String[] split_msg = ((String)message).split(" ");
 		if (split_msg[0].equals("registered")) {
 			user = new User(Integer.parseInt(split_msg[1]), split_msg[2]);
+			userNum = user.getUserNum();
 			registerBtn.setVisible(false);
 			signIn.setVisible(false);
 			enterPasswordField.setVisible(false);
