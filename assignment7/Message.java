@@ -1,6 +1,9 @@
 package assignment7;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int chatroomNum;
 	private int userNum; // user that sent the message
 	private String msg;

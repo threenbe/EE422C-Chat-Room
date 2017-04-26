@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
-	private HashMap<String, Integer> passwordList;
-	private ArrayList<User> users;
-	private ArrayList<Chatroom> chatrooms;
+	private static HashMap<String, Integer> passwordList;
+	private static ArrayList<User> users;
+	private static ArrayList<Chatroom> chatrooms;
 	
 	private int usersCount = 0;
 	private int chatroomsCount = 0;
@@ -44,26 +44,26 @@ public class ServerMain extends Observable {
 				@Override
 				public void run() {
 					// TODO Add all the shit for handling a client here AFAIK
-					String message;
-					//Object message;
+					//String message;
+					Object message;
 					try {
-						BufferedReader reader = new BufferedReader(
-								new InputStreamReader(clientSocket.getInputStream()));
-						//ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
-						message = reader.readLine();
-						//message = reader.readObject();
+						//BufferedReader reader = new BufferedReader(
+						//		new InputStreamReader(clientSocket.getInputStream()));
+						ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+						//message = reader.readLine();
+						message = reader.readObject();
 						while (message != null) {
 							processMessage(message, writer); // TODO
-							message = reader.readLine();
-							//message = reader.readObject();
+							//message = reader.readLine();
+							message = reader.readObject();
 						}
 					} catch (SocketException e) {
 						System.out.println("Client disconnected!");
 					} catch (IOException e) {
 						e.printStackTrace();
-					} /*catch (ClassNotFoundException e) {
+					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
-					}*/
+					}
 				}
 			}).start();
 			this.addObserver(writer);
@@ -72,52 +72,63 @@ public class ServerMain extends Observable {
 	private void processMessage(Object message, ClientObserver writer) {
 		// TODO eventually take this out
 		if (message instanceof String) {
-			String msg = (String) message;
-			String[] msg_split = msg.split(" ");
-			if (msg_split[0].equals("/SIGNUP")) {
-				users.add(new User(++usersCount, msg_split[1]));
-				passwordList.put(msg_split[2], usersCount);
-				writer.println("registered " + usersCount + " " + msg_split[1]);
-				writer.flush();
-				return;
-			} else if (msg_split[0].equals("/SIGNIN")) {
-				writer.println("registered");
-				writer.flush();
+			try {
+				String msg = (String) message;
+				String[] msg_split = msg.split(" ");
+				if (msg_split[0].equals("/SIGNUP")) {
+					users.add(new User(++usersCount, msg_split[1]));
+					passwordList.put(msg_split[2], usersCount);
+					writer.writeObject("registered " + usersCount + " " + msg_split[1]);
+					//writer.println("registered " + usersCount + " " + msg_split[1]);
+					writer.flush();
+					return;
+				} else if (msg_split[0].equals("/SIGNIN")) {
+					writer.writeObject("registered");
+					//writer.println("registered");
+					writer.flush();
+				}
+				setChanged();
+				notifyObservers(message);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			setChanged();
-			notifyObservers(message);
 			return;
-		}
-		
-		Message msg = (Message) message;
-		String[] tokens = msg.getMsg().split(" ");
-		if (tokens[0].equals("/createChatroom")) {
-			Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
-			for (int i = 1; i < tokens.length; i++) {
-				int id = getUserId(tokens[i]);
-				cr.addMember(id);
+		} else if (message instanceof Message) {
+			Message msg = (Message) message;
+			String[] tokens = msg.getMsg().split(" ");
+			if (tokens[0].equals("/createChatroom")) {
+				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
+				for (int i = 1; i < tokens.length; i++) {
+					int id = getUserId(tokens[i]);
+					cr.addMember(id);
+				}
+			} else if (tokens[0].equals("/changeChatroomName")) {
+				chatrooms.get(msg.getChatroomNum()).setName(tokens[1]);
+				// TODO make sure users in chatroom see this update
+			} else if (tokens[0].equals("/changeNick")) {
+				users.get(msg.getUserNum()).setName(tokens[1]);
+				// TODO make sure chatrooms and users see this update
+			} else if (tokens[0].equals("/addFriend")) {
+				int id = getUserId(tokens[1]);
+				users.get(msg.getUserNum()).addFriend(id);
+				// TODO make sure users see this update
+			} else { // just plain old message
+				setChanged();
+				notifyObservers(msg);
 			}
-		} else if (tokens[0].equals("/changeChatroomName")) {
-			chatrooms.get(msg.getChatroomNum()).setName(tokens[1]);
-			// TODO make sure users in chatroom see this update
-		} else if (tokens[0].equals("/changeNick")) {
-			users.get(msg.getUserNum()).setName(tokens[1]);
-			// TODO make sure chatrooms and users see this update
-		} else if (tokens[0].equals("/addFriend")) {
-			int id = getUserId(tokens[1]);
-			users.get(msg.getUserNum()).addFriend(id);
-			// TODO make sure users see this update
-		} else { // just plain old message
-			setChanged();
-			notifyObservers(msg.getMsg());
+		} else {
+			System.out.println("Unfamiliar object type inputted by client. Input ignored. Fix later.");
 		}
 	}
-	private int getUserId(String name) {
+	public int getUserId(String name) {
 		for (User u : users) {
 			if (u.getName().equals(name)) {
 				return u.getUserNum();
 			}
 		}
 		return -1;
+	}
+	public static String getUserName(int id) {
+		return users.get(id).getName();
 	}
 }

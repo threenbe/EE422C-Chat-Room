@@ -7,22 +7,28 @@ import java.io.PrintWriter;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ClientObserver extends /*ObjectOutputStream*/ PrintWriter implements Observer {
+public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implements Observer {
 	public ClientObserver(OutputStream out) throws IOException {
 		super(out);
 	}
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		/*String message = "";
-		if (obj instanceof Message) {
-			message = "User " + Integer.toString(((Message)obj).getUserNum()) + " said: " + ((Message)obj).getMsg();
-			this.println(message);
-			this.flush();
-		}*/
-		if (obj instanceof String) {
-			this.println(obj);
-			this.flush();
+		try{
+			String message = "";
+			if (obj instanceof Message) {
+				Message input = (Message) obj;
+				message = "User " + ServerMain.getUserName(input.getUserNum()) + " said: " + input.getMsg();
+				this.writeObject(message);
+				//this.println(message);
+				this.flush();
+			} else if (obj instanceof String) {
+				this.writeObject(obj);
+				//this.println(obj);
+				this.flush();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
