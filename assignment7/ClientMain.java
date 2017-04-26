@@ -30,7 +30,6 @@ public class ClientMain extends Application {
 	private ObjectInputStream reader;
 	//private PrintWriter writer;
 	private ObjectOutputStream writer;
-	@SuppressWarnings("unused")
 	private User user;
 	private int userNum;
 	

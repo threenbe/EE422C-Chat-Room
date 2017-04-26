@@ -16,6 +16,7 @@ public class ServerMain extends Observable {
 	private static HashMap<String, Integer> passwordList;
 	private static ArrayList<User> users;
 	private static ArrayList<Chatroom> chatrooms;
+	private static ArrayList<ClientObserver> observers;
 	
 	private int usersCount = -1;
 	private int chatroomsCount = 0;
@@ -33,7 +34,7 @@ public class ServerMain extends Observable {
 		passwordList = new HashMap<String, Integer>();
 		users = new ArrayList<User>();
 		chatrooms = new ArrayList<Chatroom>();
-		
+		observers = new ArrayList<ClientObserver>();
 		
 		@SuppressWarnings("resource")
 		ServerSocket serverSocket = new ServerSocket(5000);
@@ -132,5 +133,9 @@ public class ServerMain extends Observable {
 	}
 	public static String getUserName(int id) {
 		return users.get(id).getName();
+	}
+	
+	public static ClientObserver getObserver(int id) {
+		return observers.get(id);
 	}
 }
