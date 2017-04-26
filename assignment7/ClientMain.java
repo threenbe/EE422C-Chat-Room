@@ -199,9 +199,8 @@ public class ClientMain extends Application {
 										input.setText(msg);
 									}
 								});
-								
-								message = client.reader.readLine();
 							}
+							message = client.reader.readLine();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
