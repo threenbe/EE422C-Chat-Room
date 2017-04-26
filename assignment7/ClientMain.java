@@ -164,8 +164,7 @@ public class ClientMain extends Application {
 					// TODO Auto-generated method stub
 					String message;
 					try {
-						message = client.reader.readLine();
-						while (message != null) {
+						while ((message = client.reader.readLine()) != null) {
 							String[] split_msg = message.split(" ");
 							if (split_msg[0].equals("registered")) {
 								user = new User(Integer.parseInt(split_msg[1]), split_msg[2]);
@@ -200,7 +199,6 @@ public class ClientMain extends Application {
 									}
 								});
 							}
-							message = client.reader.readLine();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
