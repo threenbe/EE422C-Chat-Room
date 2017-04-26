@@ -8,7 +8,7 @@ public class Chatroom extends Observable {
 	private String name;
 	private String password;
 	private ArrayList<Message> history = new ArrayList<Message>();
-	private ArrayList<User> members = new ArrayList<User>();
+	private ArrayList<Integer> members = new ArrayList<Integer>();
 	
 	public Chatroom(int num, String nm, String pw) {
 		chatroomNum = num;
@@ -19,7 +19,7 @@ public class Chatroom extends Observable {
 	
 	
 	
-	public void addMember(User member) {
+	public void addMember(int member) {
 		members.add(member);
 	}
 	public String getName() {

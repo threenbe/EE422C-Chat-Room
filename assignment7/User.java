@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class User {
 	private int userNum;
 	private String name;
-	private ArrayList<User> friends = new ArrayList<User>();
+	private ArrayList<Integer> friends = new ArrayList<Integer>();
+	//private ArrayList<User> friends = new ArrayList<User>();
 	
 	public User(int num, String nm) {
 		setUserNum(num);
@@ -14,14 +15,14 @@ public class User {
 	
 	
 	
-	public void addFriend(User friend) {
+	public void addFriend(int friend) {
 		friends.add(friend);
 	}
 	
-	public ArrayList<User> getFriends() {
+	public ArrayList<Integer> getFriends() {
 		return friends;
 	}
-	public void setFriends(ArrayList<User> friends) {
+	public void setFriends(ArrayList<Integer> friends) {
 		this.friends = friends;
 	}
 	public String getName() {

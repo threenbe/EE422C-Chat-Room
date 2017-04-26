@@ -69,8 +69,43 @@ public class ServerMain extends Observable {
 			this.addObserver(writer);
 		}
 	}
-	private void processMessage(String /*Object*/ message) {
-		setChanged();
-		notifyObservers(message);
+	private void processMessage(Object message) {
+		// TODO eventually take this out
+		if (message instanceof String) {
+			setChanged();
+			notifyObservers(message);
+			return;
+		}
+		
+		Message msg = (Message) message;
+		String[] tokens = msg.getMsg().split(" ");
+		if (tokens[0].equals("/createChatroom")) {
+			Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
+			for (int i = 1; i < tokens.length; i++) {
+				int id = getUserId(tokens[i]);
+				cr.addMember(id);
+			}
+		} else if (tokens[0].equals("/changeChatroomName")) {
+			chatrooms.get(msg.getChatroomNum()).setName(tokens[1]);
+			// TODO make sure users in chatroom see this update
+		} else if (tokens[0].equals("/changeNick")) {
+			users.get(msg.getUserNum()).setName(tokens[1]);
+			// TODO make sure chatrooms and users see this update
+		} else if (tokens[0].equals("/addFriend")) {
+			int id = getUserId(tokens[1]);
+			users.get(msg.getUserNum()).addFriend(id);
+			// TODO make sure users see this update
+		} else { // just plain old message
+			setChanged();
+			notifyObservers(msg.getMsg());
+		}
+	}
+	private int getUserId(String name) {
+		for (User u : users) {
+			if (u.getName().equals(name)) {
+				return u.getUserNum();
+			}
+		}
+		return -1;
 	}
 }
