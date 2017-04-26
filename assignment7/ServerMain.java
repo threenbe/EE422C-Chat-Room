@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
-	private HashMap<Integer, User> passwordList;
+	private HashMap<String, Integer> passwordList;
 	private ArrayList<User> users;
 	private ArrayList<Chatroom> chatrooms;
 	
@@ -29,7 +29,7 @@ public class ServerMain extends Observable {
 
 	private void setUpNetworking() throws Exception {
 		// other inits
-		passwordList = new HashMap<Integer, User>();
+		passwordList = new HashMap<String, Integer>();
 		users = new ArrayList<User>();
 		chatrooms = new ArrayList<Chatroom>();
 		
@@ -53,7 +53,7 @@ public class ServerMain extends Observable {
 						message = reader.readLine();
 						//message = reader.readObject();
 						while (message != null) {
-							processMessage(message); // TODO
+							processMessage(message, writer); // TODO
 							message = reader.readLine();
 							//message = reader.readObject();
 						}
@@ -69,9 +69,21 @@ public class ServerMain extends Observable {
 			this.addObserver(writer);
 		}
 	}
-	private void processMessage(Object message) {
+	private void processMessage(Object message, ClientObserver writer) {
 		// TODO eventually take this out
 		if (message instanceof String) {
+			String msg = (String) message;
+			String[] msg_split = msg.split(" ");
+			if (msg_split[0].equals("/SIGNUP")) {
+				users.add(new User(++usersCount, msg_split[1]));
+				passwordList.put(msg_split[2], usersCount);
+				writer.println("registered " + usersCount + " " + msg_split[1]);
+				writer.flush();
+				return;
+			} else if (msg_split[0].equals("/SIGNIN")) {
+				writer.println("registered");
+				writer.flush();
+			}
 			setChanged();
 			notifyObservers(message);
 			return;
