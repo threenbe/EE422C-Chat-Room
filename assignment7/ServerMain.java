@@ -86,7 +86,7 @@ public class ServerMain extends Observable {
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/SIGNIN")) {
-					writer.writeObject("registered");
+					writer.writeObject("logged-in ");
 					//writer.println("registered");
 					writer.flush();
 				}
