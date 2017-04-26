@@ -50,8 +50,6 @@ public class ServerMain extends Observable {
 						message = reader.readLine();
 						while (message != null) {
 							processMessage(message); // TODO
-							setChanged();
-							notifyObservers(message);
 							message = reader.readLine();
 						}
 					} catch (SocketException e) {
@@ -65,6 +63,7 @@ public class ServerMain extends Observable {
 		}
 	}
 	private void processMessage(String message) {
-		
+		setChanged();
+		notifyObservers(message);
 	}
 }
