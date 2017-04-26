@@ -34,4 +34,16 @@ public class Chatroom extends Observable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+
+
+
+	public ArrayList<Message> getHistory() {
+		return history;
+	}
+
+
+	public void addHistory(Message msg) {
+		history.add(msg);
+	}
 }
