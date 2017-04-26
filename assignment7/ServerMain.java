@@ -1,5 +1,6 @@
 package assignment7;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -49,7 +50,8 @@ public class ServerMain extends Observable {
 					try {
 						//BufferedReader reader = new BufferedReader(
 						//		new InputStreamReader(clientSocket.getInputStream()));
-						ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+						ObjectInputStream reader = new ObjectInputStream(
+								new BufferedInputStream(clientSocket.getInputStream()));
 						//message = reader.readLine();
 						message = reader.readObject();
 						while (message != null) {

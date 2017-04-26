@@ -1,5 +1,6 @@
 package assignment7;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -187,7 +188,7 @@ public class ClientMain extends Application {
 			@SuppressWarnings("resource")
 			Socket socket = new Socket("127.0.0.1", 5000);
 			//client.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			client.reader = new ObjectInputStream(socket.getInputStream());
+			client.reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			//client.writer = new PrintWriter(socket.getOutputStream());
 			client.writer = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("connected");
