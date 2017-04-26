@@ -44,31 +44,32 @@ public class ServerMain extends Observable {
 				@Override
 				public void run() {
 					// TODO Add all the shit for handling a client here AFAIK
-					//String message;
-					Object message;
+					String message;
+					//Object message;
 					try {
-						//BufferedReader reader = new BufferedReader(
-								//new InputStreamReader(clientSocket.getInputStream()));
-						ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
-						//message = reader.readLine();
-						message = reader.readObject();
+						BufferedReader reader = new BufferedReader(
+								new InputStreamReader(clientSocket.getInputStream()));
+						//ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+						message = reader.readLine();
+						//message = reader.readObject();
 						while (message != null) {
 							processMessage(message); // TODO
-							message = reader.readObject();
+							message = reader.readLine();
+							//message = reader.readObject();
 						}
 					} catch (SocketException e) {
 						System.out.println("Client disconnected!");
 					} catch (IOException e) {
 						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
+					} /*catch (ClassNotFoundException e) {
 						e.printStackTrace();
-					}
+					}*/
 				}
 			}).start();
 			this.addObserver(writer);
 		}
 	}
-	private void processMessage(/*String*/ Object message) {
+	private void processMessage(String /*Object*/ message) {
 		setChanged();
 		notifyObservers(message);
 	}
