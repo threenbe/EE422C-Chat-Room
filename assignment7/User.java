@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class User {
 	private int userNum;
 	private String name;
+	private boolean isOnline;
 	private ArrayList<Integer> friends = new ArrayList<Integer>();
 	//private ArrayList<User> friends = new ArrayList<User>();
 	
@@ -36,5 +37,13 @@ public class User {
 	}
 	public void setUserNum(int userNum) {
 		this.userNum = userNum;
+	}
+
+	public boolean isOnline() {
+		return isOnline;
+	}
+
+	public void setOnline(boolean isOnline) {
+		this.isOnline = isOnline;
 	}
 }

@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
-	private static HashMap<String, Integer> passwordList;
 	private static ArrayList<User> users;
+	private static ArrayList<String> passwords;
 	private static ArrayList<Chatroom> chatrooms;
 	private static ArrayList<ClientObserver> observers;
 	
@@ -31,10 +31,10 @@ public class ServerMain extends Observable {
 
 	private void setUpNetworking() throws Exception {
 		// other inits
-		passwordList = new HashMap<String, Integer>();
 		users = new ArrayList<User>();
 		chatrooms = new ArrayList<Chatroom>();
 		observers = new ArrayList<ClientObserver>();
+		passwords = new ArrayList<String>();
 		
 		@SuppressWarnings("resource")
 		ServerSocket serverSocket = new ServerSocket(5000);
@@ -85,18 +85,49 @@ public class ServerMain extends Observable {
 							return;
 						}
 					}
-					users.add(new User(++usersCount, msg_split[1]));
-					passwordList.put(msg_split[2], usersCount);
+					User this_user = new User(++usersCount, msg_split[1]);
+					this_user.setOnline(true);
+					users.add(this_user);
+					passwords.add(msg_split[2]);
 					observers.add(usersCount, writer);
 					writer.writeObject("registered " + usersCount + " " + msg_split[1]);
 					//writer.println("registered " + usersCount + " " + msg_split[1]);
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/SIGNIN")) {
-					observers.add(usersCount, writer);
+					String this_name = msg_split[1];
+					String this_password = msg_split[2];
+					if (getUserId(this_name) == -1) {
+						writer.writeObject("name-not-found ");
+						return;
+					}
+					if (this_password.equals(passwords.get(getUserId(this_name)))) {
+						for (User u : users) {
+							if (u.getName().equals(this_name)) {
+								if (u.isOnline()) {
+									writer.writeObject("already-online ");
+									return;
+								} else {
+									u.setOnline(true);
+								}
+							}
+						}
+					} else {
+						writer.writeObject("wrong-password ");
+						return;
+					}
+					observers.add(getUserId(this_name), writer);
 					writer.writeObject("logged-in ");
 					//writer.println("registered");
 					writer.flush();
+					return;
+				} else if (msg_split[0].equals("/LOGOUT")) {
+					for (User u : users) {
+						if (u.getName().equals(getUserName(Integer.parseInt(msg_split[1])))) {
+							u.setOnline(false);
+							return;
+						}
+					}
 				}
 				setChanged();
 				notifyObservers(message);

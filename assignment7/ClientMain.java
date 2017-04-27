@@ -48,6 +48,7 @@ public class ClientMain extends Application {
 	Text passwordPrompt = new Text();
 	Button signIn = new Button();
 	Button registerBtn = new Button();
+	Button logoutBtn = new Button();
 	Text loginError = new Text();
 	Pane pane = new Pane();
 	
@@ -110,6 +111,35 @@ public class ClientMain extends Application {
 		});
 		send.setVisible(false);
 		
+		logoutBtn.setText("Logout");
+		logoutBtn.setLayoutX(350);
+		logoutBtn.setLayoutY(670);
+		pane.getChildren().add(logoutBtn);
+		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				registerBtn.setVisible(true);
+				signIn.setVisible(true);
+				enterPasswordField.setVisible(true);
+				enterNameField.setVisible(true);
+				namePrompt.setVisible(true);
+				passwordPrompt.setVisible(true);
+				send.setVisible(false);
+				msgInput.setVisible(false);
+				input.setVisible(false);
+				text.setVisible(false);
+				logoutBtn.setVisible(false);
+				loginError.setText("");
+				loginError.setVisible(true);
+				try {
+					client.writer.writeObject("/LOGOUT " + userNum);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		logoutBtn.setVisible(false);
+		
 		//TextField enterNameField = new TextField();
 		enterNameField.setPrefWidth(160);
 		enterNameField.setLayoutX(200);
@@ -135,7 +165,7 @@ public class ClientMain extends Application {
 		pane.getChildren().add(passwordPrompt);
 		
 		//error when logging in or registering
-		loginError.setLayoutX(100);
+		loginError.setLayoutX(125);
 		loginError.setLayoutY(380);
 		loginError.setFill(Color.RED);
 		pane.getChildren().add(loginError);
@@ -151,7 +181,7 @@ public class ClientMain extends Application {
 			public void handle(ActionEvent e) {
 				try {
 					String name = enterNameField.getText();
-					String password = enterNameField.getText();
+					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
 						//client.writer.println("/SIGNIN " + name + " " + password);
 						client.writer.writeObject("/SIGNIN " + name + " " + password);
@@ -177,7 +207,7 @@ public class ClientMain extends Application {
 			public void handle(ActionEvent e) {
 				try {
 					String name = enterNameField.getText();
-					String password = enterNameField.getText();
+					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
 						//client.writer.println("/SIGNUP " + name + " " + password);
 						client.writer.writeObject("/SIGNUP " + name + " " + password);
@@ -246,6 +276,7 @@ public class ClientMain extends Application {
 			msgInput.setVisible(true);
 			input.setVisible(true);
 			text.setVisible(true);
+			logoutBtn.setVisible(true);
 			loginError.setText("");
 			loginError.setVisible(false);
 		} else if (split_msg[0].equals("logged-in")) {
@@ -259,10 +290,17 @@ public class ClientMain extends Application {
 			msgInput.setVisible(true);
 			input.setVisible(true);
 			text.setVisible(true);
+			logoutBtn.setVisible(true);
 			loginError.setText("");
 			loginError.setVisible(false);
 		} else if (split_msg[0].equals("name-taken")){
-			loginError.setText("Sorry, that name has been taken. Please try again.");
+			loginError.setText("That username is taken. Please try again.");
+		} else if (split_msg[0].equals("name-not-found")){
+			loginError.setText("Username not recognized. Please try again.");
+		} else if (split_msg[0].equals("already-online")) {
+			loginError.setText("This user is already online. Please try again.");
+		} else if (split_msg[0].equals("wrong-password")) {
+			loginError.setText("Password is incorrect. Please try again.");
 		} else {
 			// TODO make this append instead
 			final String msg = ((String)message);
