@@ -190,9 +190,9 @@ public class ClientMain extends Application {
 			@SuppressWarnings("resource")
 			Socket socket = new Socket("127.0.0.1", 5000);
 			//client.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+			client.reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			//client.writer = new PrintWriter(socket.getOutputStream());
-			writer = new ObjectOutputStream(socket.getOutputStream());
+			client.writer = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("connected");
 			new Thread(new Runnable(){
 				@Override
@@ -200,7 +200,7 @@ public class ClientMain extends Application {
 					Object message;
 					//String message;
 					try {
-						while ((message = reader.readObject()/*readLine()*/) != null) {
+						while ((message = client.reader.readObject()/*readLine()*/) != null) {
 							if (message instanceof Message) {
 								Message msg = (Message) message;
 								//TODO
