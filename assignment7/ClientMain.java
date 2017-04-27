@@ -18,6 +18,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -36,6 +39,7 @@ public class ClientMain extends Application {
 	private HashMap<Integer, ClientTab> chatrooms;
 	private int chatroomCount = 0;
 	private int currentChatroom = 0;
+	private HashMap<Integer, Tab> tabs = new HashMap<Integer, Tab>();
 	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
@@ -51,6 +55,7 @@ public class ClientMain extends Application {
 	Button logoutBtn = new Button();
 	Text loginError = new Text();
 	Pane pane = new Pane();
+	TabPane tabPane = new TabPane();
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -239,11 +244,18 @@ public class ClientMain extends Application {
 					try {
 						while ((message = client.reader.readObject()/*readLine()*/) != null) {
 							if (message instanceof Message) {
+								System.out.println("message read");
 								Message msg = (Message) message;
 								//TODO
 								String mesg = "User " + ServerMain.getUserName(msg.getUserNum())
 										+ " said: " + msg.getMsg();
-								processString(mesg);
+								TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
+								if (ta == null) {
+									createTab(msg.getChatroomNum());
+									ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
+								}
+								ta.appendText("\n" + msg);
+								//processString(mesg);
 							}
 							if (message instanceof String) {
 								String msg = (String) message; 
@@ -316,5 +328,17 @@ public class ClientMain extends Application {
 	}
 	public Message createMessage() {
 		return new Message(currentChatroom, userNum, msgInput.getText());
+	}
+	private void createTab(int chatroom) {
+		Tab tab = new Tab();
+		tab.setText(ServerMain.getChatroomName(chatroom));
+		TextArea textArea = new TextArea();
+		tab.setContent(textArea);
+		tabs.put(chatroom, tab);
+		tabPane.getTabs().add(tab);
+	}
+	private void removeTab(int chatroom) {
+		tabPane.getTabs().remove(tabs.get(chatroom));
+		tabs.remove(chatroom);
 	}
 }

@@ -19,7 +19,6 @@ public class Chatroom extends Observable {
 	
 	
 	public void sendMessage(Message message) {
-		System.out.println("message sent to chatroom " + chatroomNum);
 		setChanged();
 		notifyObservers(message);
 	}

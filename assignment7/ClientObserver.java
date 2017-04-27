@@ -19,7 +19,7 @@ public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implement
 			if (obj instanceof Message) {
 				Message input = (Message) obj;
 				message = "User " + ServerMain.getUserName(input.getUserNum()) + " said: " + input.getMsg();
-				this.writeObject(message);
+				this.writeObject(input);
 				//this.println(message);
 				this.flush();
 			} else if (obj instanceof String) {

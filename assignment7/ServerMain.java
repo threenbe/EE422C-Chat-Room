@@ -18,8 +18,8 @@ public class ServerMain extends Observable {
 	private static ArrayList<Chatroom> chatrooms;
 	private static ArrayList<ClientObserver> observers;
 	
-	private int usersCount = -1;
-	private int chatroomsCount = 0;
+	private int usersCount = 0;
+	private int chatroomsCount = 1;
 	
 	public static void main(String[] args) {
 		try {
@@ -35,6 +35,7 @@ public class ServerMain extends Observable {
 		chatrooms = new ArrayList<Chatroom>();
 		observers = new ArrayList<ClientObserver>();
 		passwords = new ArrayList<String>();
+		chatrooms.add(0, new Chatroom(0, "Global", ""));
 		
 		@SuppressWarnings("resource")
 		ServerSocket serverSocket = new ServerSocket(5000);
@@ -85,12 +86,14 @@ public class ServerMain extends Observable {
 							return;
 						}
 					}
-					User this_user = new User(++usersCount, msg_split[1]);
+					int userNum = usersCount++;
+					User this_user = new User(userNum, msg_split[1]);
 					this_user.setOnline(true);
 					users.add(this_user);
 					passwords.add(msg_split[2]);
-					observers.add(usersCount, writer);
-					writer.writeObject("registered " + usersCount + " " + msg_split[1]);
+					observers.add(userNum, writer);
+					chatrooms.get(0).addMember(userNum);
+					writer.writeObject("registered " + userNum + " " + msg_split[1]);
 					//writer.println("registered " + usersCount + " " + msg_split[1]);
 					writer.flush();
 					return;
@@ -184,7 +187,10 @@ public class ServerMain extends Observable {
 		if (users.size() <= id) return null;
 		return users.get(id).getName();
 	}
-	
+	public static String getChatroomName(int id) {
+		if (chatrooms.size() <= id) return null;
+		return chatrooms.get(id).getName();
+	}
 	public static ClientObserver getObserver(int id) {
 		return observers.get(id);
 	}
