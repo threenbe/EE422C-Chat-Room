@@ -79,6 +79,12 @@ public class ServerMain extends Observable {
 				String msg = (String) message;
 				String[] msg_split = msg.split(" ");
 				if (msg_split[0].equals("/SIGNUP")) {
+					for (User u : users) {
+						if (u.getName().equals(msg_split[1])) {
+							writer.writeObject("name-taken ");
+							return;
+						}
+					}
 					users.add(new User(++usersCount, msg_split[1]));
 					passwordList.put(msg_split[2], usersCount);
 					observers.add(usersCount, writer);

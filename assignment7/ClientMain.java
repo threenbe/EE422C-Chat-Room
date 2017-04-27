@@ -48,6 +48,7 @@ public class ClientMain extends Application {
 	Text passwordPrompt = new Text();
 	Button signIn = new Button();
 	Button registerBtn = new Button();
+	Text loginError = new Text();
 	Pane pane = new Pane();
 	
 	public static void main(String[] args) {
@@ -124,14 +125,20 @@ public class ClientMain extends Application {
 		//PasswordField enterPasswordField = new PasswordField();
 		enterPasswordField.setPrefWidth(160);
 		enterPasswordField.setLayoutX(200);
-		enterPasswordField.setLayoutY(350);
+		enterPasswordField.setLayoutY(340);
 		pane.getChildren().add(enterPasswordField);
 		//Text passwordPrompt = new Text();
 		passwordPrompt.setLayoutX(105);
-		passwordPrompt.setLayoutY(370);
+		passwordPrompt.setLayoutY(360);
 		passwordPrompt.setFont(Font.font("Verdana", 18));
 		passwordPrompt.setText("Password: ");
 		pane.getChildren().add(passwordPrompt);
+		
+		//error when logging in or registering
+		loginError.setLayoutX(100);
+		loginError.setLayoutY(380);
+		loginError.setFill(Color.RED);
+		pane.getChildren().add(loginError);
 		
 		//Button signIn = new Button();
 		signIn.setText("Sign In");
@@ -239,6 +246,8 @@ public class ClientMain extends Application {
 			msgInput.setVisible(true);
 			input.setVisible(true);
 			text.setVisible(true);
+			loginError.setText("");
+			loginError.setVisible(false);
 		} else if (split_msg[0].equals("logged-in")) {
 			registerBtn.setVisible(false);
 			signIn.setVisible(false);
@@ -250,6 +259,10 @@ public class ClientMain extends Application {
 			msgInput.setVisible(true);
 			input.setVisible(true);
 			text.setVisible(true);
+			loginError.setText("");
+			loginError.setVisible(false);
+		} else if (split_msg[0].equals("name-taken")){
+			loginError.setText("Sorry, that name has been taken. Please try again.");
 		} else {
 			// TODO make this append instead
 			final String msg = ((String)message);
