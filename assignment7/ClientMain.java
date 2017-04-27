@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -32,6 +33,9 @@ public class ClientMain extends Application {
 	private ObjectOutputStream writer;
 	private User user;
 	private int userNum;
+	private HashMap<Integer, ClientTab> chatrooms;
+	private int chatroomCount = 0;
+	private int currentChatroom = 0;
 	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
@@ -44,7 +48,7 @@ public class ClientMain extends Application {
 	Text passwordPrompt = new Text();
 	Button signIn = new Button();
 	Button registerBtn = new Button();
-	
+	Pane pane = new Pane();
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -53,9 +57,8 @@ public class ClientMain extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		ClientMain client = new ClientMain();
+		chatrooms = new HashMap<Integer, ClientTab>();
 		// set up JavaFX window
-		// pane for all the buttons and text boxes
-		Pane pane = new Pane();
 		
 		// area for text
 		//Label text = new Label();
@@ -187,9 +190,9 @@ public class ClientMain extends Application {
 			@SuppressWarnings("resource")
 			Socket socket = new Socket("127.0.0.1", 5000);
 			//client.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			client.reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+			reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			//client.writer = new PrintWriter(socket.getOutputStream());
-			client.writer = new ObjectOutputStream(socket.getOutputStream());
+			writer = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("connected");
 			new Thread(new Runnable(){
 				@Override
@@ -197,7 +200,7 @@ public class ClientMain extends Application {
 					Object message;
 					//String message;
 					try {
-						while ((message = client.reader.readObject()/*readLine()*/) != null) {
+						while ((message = reader.readObject()/*readLine()*/) != null) {
 							if (message instanceof Message) {
 								Message msg = (Message) message;
 								//TODO
@@ -256,9 +259,11 @@ public class ClientMain extends Application {
 					input.setText(msg);
 				}
 			});
+			
+			
 		}
 	}
 	public Message createMessage() {
-		return new Message(0, userNum, msgInput.getText());
+		return new Message(currentChatroom, userNum, msgInput.getText());
 	}
 }

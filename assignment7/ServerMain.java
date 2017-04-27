@@ -56,7 +56,7 @@ public class ServerMain extends Observable {
 						//message = reader.readLine();
 						message = reader.readObject();
 						while (message != null) {
-							processMessage(message, writer); // TODO
+							processMessage(message, writer); 
 							//message = reader.readLine();
 							message = reader.readObject();
 						}
@@ -81,11 +81,13 @@ public class ServerMain extends Observable {
 				if (msg_split[0].equals("/SIGNUP")) {
 					users.add(new User(++usersCount, msg_split[1]));
 					passwordList.put(msg_split[2], usersCount);
+					observers.add(usersCount, writer);
 					writer.writeObject("registered " + usersCount + " " + msg_split[1]);
 					//writer.println("registered " + usersCount + " " + msg_split[1]);
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/SIGNIN")) {
+					observers.add(usersCount, writer);
 					writer.writeObject("logged-in ");
 					//writer.println("registered");
 					writer.flush();
@@ -103,7 +105,15 @@ public class ServerMain extends Observable {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
 				for (int i = 1; i < tokens.length; i++) {
 					int id = getUserId(tokens[i]);
-					cr.addMember(id);
+					if (id >= 0) cr.addMember(id);
+				}
+				chatrooms.add(chatroomsCount, cr);
+				chatroomsCount++;
+			} else if (tokens[0].equals("/addMember") || tokens[0].equals("/addMembers")) {
+				int user;
+				for (int i = 1; i < tokens.length; i++) {
+					user = getUserId(tokens[i]);
+					if (user >= 0) chatrooms.get(msg.getChatroomNum()).addMember(user);
 				}
 			} else if (tokens[0].equals("/changeChatroomName")) {
 				chatrooms.get(msg.getChatroomNum()).setName(tokens[1]);
@@ -116,8 +126,9 @@ public class ServerMain extends Observable {
 				users.get(msg.getUserNum()).addFriend(id);
 				// TODO make sure users see this update
 			} else { // just plain old message
-				setChanged();
-				notifyObservers(msg);
+				chatrooms.get(msg.getChatroomNum()).sendMessage(msg);
+				//setChanged();
+				//notifyObservers(msg);
 			}
 		} else {
 			System.out.println("Unfamiliar object type inputted by client. Input ignored. Fix later.");
@@ -132,6 +143,7 @@ public class ServerMain extends Observable {
 		return -1;
 	}
 	public static String getUserName(int id) {
+		if (users.size() <= id) return null;
 		return users.get(id).getName();
 	}
 	

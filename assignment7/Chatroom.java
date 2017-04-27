@@ -19,16 +19,17 @@ public class Chatroom extends Observable {
 	
 	
 	public void sendMessage(Message message) {
+		System.out.println("message sent to chatroom " + chatroomNum);
 		setChanged();
 		notifyObservers(message);
 	}
 	public void addMember(int member) {
 		members.add(member);
-		addObserver(ServerMain.getObserver(member));
+		this.addObserver(ServerMain.getObserver(member));
 	}
 	public void removeMember(int member) {
 		members.remove(member);
-		deleteObserver(ServerMain.getObserver(member));
+		this.deleteObserver(ServerMain.getObserver(member));
 	}
 	public String getName() {
 		return name;
