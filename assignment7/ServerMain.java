@@ -109,6 +109,7 @@ public class ServerMain extends Observable {
 			String[] tokens = msg.getMsg().split(" ");
 			if (tokens[0].equals("/createChatroom")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
+				cr.addMember(msg.getUserNum());
 				for (int i = 1; i < tokens.length; i++) {
 					int id = getUserId(tokens[i]);
 					if (id >= 0) cr.addMember(id);
