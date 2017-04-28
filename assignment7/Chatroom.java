@@ -35,8 +35,8 @@ public class Chatroom extends Observable implements Serializable {
 		members.remove(member);
 		this.deleteObserver(ServerMain.getObserver(member));
 	}
-	public void updateMember(int member, ClientObserver obs) {
-		this.deleteObserver(ServerMain.getObserver(member));
+	public void updateMember(ClientObserver old, ClientObserver obs) {
+		this.deleteObserver(old);
 		this.addObserver(obs);
 	}
 	public String getName() {

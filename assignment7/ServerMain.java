@@ -100,8 +100,10 @@ public class ServerMain extends Observable {
 							return;
 						} else {
 							u.setOnline(true);
+							//ClientObserver old = observers.get(id);
 							for (Chatroom c : chatrooms) {
-								c.updateMember(id, writer);
+							//	c.updateMember(old, writer);
+								c.addObserver(writer);
 								c.sendChatroom();
 							}
 							observers.set(id, writer);
@@ -127,6 +129,16 @@ public class ServerMain extends Observable {
 					for (User u : users) {
 						if (u.getName().equals(getUserName(Integer.parseInt(msg_split[1])))) {
 							u.setOnline(false);
+							int id = u.getUserNum();
+							ClientObserver obs = observers.get(id);
+							if (obs != null) {
+								for (Chatroom c : chatrooms) {
+									c.deleteObserver(obs);
+								}
+								this.deleteObserver(obs);
+							}
+							observers.set(id, null);
+							
 							return;
 						}
 					}

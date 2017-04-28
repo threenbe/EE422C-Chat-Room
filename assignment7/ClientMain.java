@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -126,13 +128,21 @@ public class ClientMain extends Application {
 		pane.getChildren().add(logoutBtn);
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				for (HashMap.Entry<Integer, Tab> t : tabs.entrySet()) {
-					//if (t.getKey() != 0) 
-						tabPane.getTabs().remove(t.getValue());
+				for (Iterator<HashMap.Entry<Integer, Tab>> it = tabs.entrySet().iterator(); it.hasNext(); ) {
+					Map.Entry<Integer, Tab> entry = it.next();
+					if (entry.getKey() != 0) {
+						tabPane.getTabs().remove(entry.getValue());
+						it.remove();
+						
+					}
 				}
-				tabs.clear();
-				tabPane.getTabs().add(globalTab);
-				tabs.put(0, globalTab);
+				//for (HashMap.Entry<Integer, Tab> t : tabs.entrySet()) {
+					//if (t.getKey() != 0) 
+				//		tabPane.getTabs().remove(t.getValue());
+				//}
+				//tabs.clear();
+				//tabPane.getTabs().add(globalTab);
+				//tabs.put(0, globalTab);
 				
 				openLoginScreen();
 				try {
