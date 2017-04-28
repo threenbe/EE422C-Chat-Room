@@ -311,9 +311,13 @@ public class ClientMain extends Application {
 		
 		tabPane.setMinWidth(560);
 		tabPane.setMinHeight(100);
-		//tabPane.getTabs().add(new Tab("Ass cheese"));
 		pane.getChildren().add(tabPane);
-		
+		//adding global chatroom right off the bat
+		Tab globalTab = new Tab("Global");
+		globalTab.setContent(new TextArea());
+		tabPane.getTabs().add(globalTab);
+		tabs.put(0, globalTab);
+		tabPane.setVisible(false);
 		
 		primaryStage.setScene(new Scene(pane, 560, 700));
 		primaryStage.show();
