@@ -36,7 +36,6 @@ public class ClientMain extends Application {
 	private ObjectOutputStream writer;
 	private User user;
 	private int userNum;
-	private HashMap<Integer, ClientTab> chatrooms;
 	private int chatroomCount = 0;
 	private int currentChatroom = 0;
 	private HashMap<Integer, Tab> tabs = new HashMap<Integer, Tab>();
@@ -67,7 +66,6 @@ public class ClientMain extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		ClientMain client = new ClientMain();
-		chatrooms = new HashMap<Integer, ClientTab>();
 		// set up JavaFX window
 		
 		// area for text
