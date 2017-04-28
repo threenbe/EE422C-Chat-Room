@@ -57,6 +57,7 @@ public class ClientMain extends Application {
 	Pane pane = new Pane();
 	TabPane tabPane = new TabPane();
 	Tab globalTab = new Tab("Global");
+	TextArea globalTextArea = new TextArea();
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -155,13 +156,13 @@ public class ClientMain extends Application {
 		logoutBtn.setVisible(false);
 		
 		//TextField enterNameField = new TextField();
-		enterNameField.setPrefWidth(160);
-		enterNameField.setLayoutX(200);
+		enterNameField.setPrefWidth(200);
+		enterNameField.setLayoutX(400);
 		enterNameField.setLayoutY(300);
 		enterNameField.setStyle("-fx-background-color: #d3d3d3; -fx-font: 14 arial");
 		pane.getChildren().add(enterNameField);
 		//Text namePrompt = new Text();
-		namePrompt.setLayoutX(135);
+		namePrompt.setLayoutX(335);
 		namePrompt.setLayoutY(320);
 		namePrompt.setFont(Font.font("Verdana", 18));
 		namePrompt.setFill(Color.WHITE);
@@ -169,13 +170,13 @@ public class ClientMain extends Application {
 		pane.getChildren().add(namePrompt);
 		
 		//PasswordField enterPasswordField = new PasswordField();
-		enterPasswordField.setPrefWidth(160);
-		enterPasswordField.setLayoutX(200);
+		enterPasswordField.setPrefWidth(200);
+		enterPasswordField.setLayoutX(400);
 		enterPasswordField.setLayoutY(340);
 		enterPasswordField.setStyle("-fx-background-color: #d3d3d3; -fx-font: 14 arial");
 		pane.getChildren().add(enterPasswordField);
 		//Text passwordPrompt = new Text();
-		passwordPrompt.setLayoutX(105);
+		passwordPrompt.setLayoutX(305);
 		passwordPrompt.setLayoutY(360);
 		passwordPrompt.setFont(Font.font("Verdana", 18));
 		passwordPrompt.setFill(Color.WHITE);
@@ -183,7 +184,7 @@ public class ClientMain extends Application {
 		pane.getChildren().add(passwordPrompt);
 		
 		//error when logging in or registering
-		loginError.setLayoutX(125);
+		loginError.setLayoutX(350);
 		loginError.setLayoutY(380);
 		loginError.setFill(Color.RED);
 		pane.getChildren().add(loginError);
@@ -193,7 +194,7 @@ public class ClientMain extends Application {
 		signIn.setPrefWidth(100);
 		signIn.setPrefHeight(20);
 		signIn.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
-		signIn.setLayoutX(230);
+		signIn.setLayoutX(430);
 		signIn.setLayoutY(390);
 		pane.getChildren().add(signIn);
 		signIn.setOnAction(new EventHandler<ActionEvent>() {
@@ -218,7 +219,7 @@ public class ClientMain extends Application {
 		registerBtn.setText("Sign Up");
 		registerBtn.setPrefWidth(100);
 		registerBtn.setPrefHeight(20);
-		registerBtn.setLayoutX(230);
+		registerBtn.setLayoutX(430);
 		registerBtn.setLayoutY(420);
 		registerBtn.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
 		pane.getChildren().add(registerBtn);
@@ -329,12 +330,15 @@ public class ClientMain extends Application {
 		pane.getChildren().add(tabPane);
 		//adding global chatroom right off the bat
 		//Tab globalTab = new Tab("Global");
-		globalTab.setContent(new TextArea());
+		globalTextArea.setPrefWidth(1000);
+		globalTextArea.setPrefHeight(600);
+		globalTextArea.setStyle("-fx-control-inner-background: #555555; -fx-font-family: verdana; -fx-text-fill: #e5e4e2");
+		globalTab.setContent(globalTextArea);
 		tabPane.getTabs().add(globalTab);
 		tabs.put(0, globalTab);
 		tabPane.setVisible(false);
 		
-		primaryStage.setScene(new Scene(pane, 560, 700));
+		primaryStage.setScene(new Scene(pane, 1000, 700));
 		primaryStage.show();
 	}
 	private void processString(String message) {
