@@ -249,39 +249,43 @@ public class ClientMain extends Application {
 									TextArea textArea = new TextArea();
 									tab.setContent(textArea);
 									tab.setText(cr.getName());
+									tabs.put(cr.getChatroomNum(), tab);
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
-											tabs.put(cr.getChatroomNum(), tab);
+											
 											tabPane.getTabs().add(tab);
 										}
 									});
-									crTab = tabs.get(cr.getChatroomNum());
+									//crTab = tabs.get(cr.getChatroomNum());
+									crTab = tab;
 								} else {
 									crTab.setText(cr.getName());
 								}
 								if (temp != null) {
-									Message msg = temp;
+								//	Message msg = temp;
+									tempMsg = temp;
 									temp = null;
-									Tab tab = tabs.get(msg.getChatroomNum());
-									if (tab == null) {
-										temp = msg;
-										client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
-									} else {
-										tempMsg = msg;
-										client.writer.writeObject("/getData user " + msg.getUserNum());
-									}
+								//	Tab tab = tabs.get(msg.getChatroomNum());
+								//	if (tab == null) {
+								//		temp = msg;
+								//		client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+								//	} else {
+								//		tempMsg = msg;
+								//		client.writer.writeObject("/getData user " + msg.getUserNum());
+									client.writer.writeObject("/getData user " + tempMsg.getUserNum());
+								//	}
 								}
 							} else if (message instanceof Message) {
 								Message msg = (Message) message;
-								Tab tab = tabs.get(msg.getChatroomNum());
-								if (tab == null) {
-									temp = msg;
-									client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
-								} else {
+								//Tab tab = tabs.get(msg.getChatroomNum());
+								//if (tab == null) {
+								//	temp = msg;
+								//	client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+								//} else {
 									tempMsg = msg;
 									client.writer.writeObject("/getData user " + msg.getUserNum());
-								}
+								//}
 							} else if (message instanceof User) {
 								User user = (User) message;
 								Message msg = tempMsg;
