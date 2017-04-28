@@ -100,11 +100,11 @@ public class ServerMain extends Observable {
 							return;
 						} else {
 							u.setOnline(true);
-							//ClientObserver old = observers.get(id);
 							for (Chatroom c : chatrooms) {
-							//	c.updateMember(old, writer);
-								c.addObserver(writer);
-								c.sendChatroom();
+								if (c.isMember(id)) {
+									c.addObserver(writer);
+									c.sendChatroom();
+								}
 							}
 							observers.set(id, writer);
 							writer.writeObject("logged-in " + id + " " + this_name);
@@ -149,7 +149,7 @@ public class ServerMain extends Observable {
 						writer.writeObject(users.get(Integer.parseInt(msg_split[2])));
 					}
 					return;
-				} 
+				}
 				setChanged();
 				notifyObservers(message);
 			} catch (IOException e) {

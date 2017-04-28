@@ -35,9 +35,13 @@ public class Chatroom extends Observable implements Serializable {
 		members.remove(member);
 		this.deleteObserver(ServerMain.getObserver(member));
 	}
-	public void updateMember(ClientObserver old, ClientObserver obs) {
-		this.deleteObserver(old);
-		this.addObserver(obs);
+	public boolean isMember(int member) {
+		for (Integer id : members) {
+			if (id == member) {
+				return true;
+			}
+		}
+		return false;
 	}
 	public String getName() {
 		return name;
@@ -57,15 +61,9 @@ public class Chatroom extends Observable implements Serializable {
 	public void addHistory(Message msg) {
 		history.add(msg);
 	}
-
-
-
 	public int getChatroomNum() {
 		return chatroomNum;
 	}
-
-
-
 	public void setChatroomNum(int chatroomNum) {
 		this.chatroomNum = chatroomNum;
 	}
