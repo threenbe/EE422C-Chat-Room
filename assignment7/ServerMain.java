@@ -111,16 +111,6 @@ public class ServerMain extends Observable {
 							writer.flush();
 							return;
 						}
-						/*for (User u : users) {
-							if (u.getName().equals(this_name)) {
-								if (u.isOnline()) {
-									writer.writeObject("already-online ");
-									return;
-								} else {
-									u.setOnline(true);
-								}
-							}
-						}*/
 					} else {
 						writer.writeObject("wrong-password ");
 						return;
@@ -150,8 +140,8 @@ public class ServerMain extends Observable {
 					}
 					return;
 				}
-				setChanged();
-				notifyObservers(message);
+				//setChanged();
+				//notifyObservers(message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -159,7 +149,8 @@ public class ServerMain extends Observable {
 		} else if (message instanceof Message) {
 			Message msg = (Message) message;
 			String[] tokens = msg.getMsg().split(" ");
-			if (tokens[0].equals("/createChatroom")) {
+			if (tokens[0].equals("/createChatroom")
+			 || tokens[0].equals("/newroom")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
 				cr.addMember(msg.getUserNum());
 				for (int i = 1; i < tokens.length; i++) {
@@ -169,7 +160,8 @@ public class ServerMain extends Observable {
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
 				cr.sendChatroom();
-			} else if (tokens[0].equals("/addMember") || tokens[0].equals("/addMembers")) {
+			} else if (tokens[0].equals("/addMember")
+					|| tokens[0].equals("/addMembers")) {
 				int user;
 				Chatroom cr = chatrooms.get(msg.getChatroomNum());
 				for (int i = 1; i < tokens.length; i++) {
@@ -177,16 +169,28 @@ public class ServerMain extends Observable {
 					if (user >= 0) cr.addMember(user);
 				}
 				cr.sendChatroom();
-			} else if (tokens[0].equals("/changeChatroomName")) {
-				Chatroom cr = chatrooms.get(msg.getChatroomNum());
-				cr.setName(tokens[1]);
-				cr.sendChatroom();
-			} else if (tokens[0].equals("/changeNick")) {
-				users.get(msg.getUserNum()).setName(tokens[1]);
+			} else if (tokens[0].equals("/changeChatroomName")
+					|| tokens[0].equals("/chatname")
+					|| tokens[0].equals("/roomname")) {
+				if (tokens.length > 1) {
+					Chatroom cr = chatrooms.get(msg.getChatroomNum());
+					cr.setName(tokens[1]);
+					cr.sendChatroom();
+				}
+			} else if (tokens[0].equals("/changeNickname")
+					|| tokens[0].equals("/nick")
+					|| tokens[0].equals("/changename")) {
+				if (tokens.length > 1) {
+					users.get(msg.getUserNum()).setName(tokens[1]);
+				}
 				// TODO make sure chatrooms and users see this update
-			} else if (tokens[0].equals("/addFriend")) {
-				int id = getUserId(tokens[1]);
-				if (id >= 0) users.get(msg.getUserNum()).addFriend(id);
+			} else if (tokens[0].equals("/addFriend")
+					|| tokens[0].equals("/addFriends")
+					|| tokens[0].equals("/add")) {
+				for (int i = 1; i < tokens.length; i++) {
+					int id = getUserId(tokens[i]);
+					if (id >= 0) users.get(msg.getUserNum()).addFriend(id);
+				}
 				// TODO make sure users see this update
 			} else { // just plain old message
 				chatrooms.get(msg.getChatroomNum()).sendMessage(msg);
