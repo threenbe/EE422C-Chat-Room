@@ -108,7 +108,7 @@ public class ServerMain extends Observable {
 						return;
 					}
 					observers.add(getUserId(this_name), writer);
-					writer.writeObject("logged-in ");
+					writer.writeObject("logged-in " + getUserId(this_name) + " " + this_name);
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/LOGOUT")) {

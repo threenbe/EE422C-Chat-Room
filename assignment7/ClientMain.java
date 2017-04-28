@@ -317,6 +317,8 @@ public class ClientMain extends Application {
 			userNum = user.getUserNum();
 			closeLoginScreen();
 		} else if (split_msg[0].equals("logged-in")) {
+			user = new User(Integer.parseInt(split_msg[1]), split_msg[2]);
+			userNum = user.getUserNum();
 			closeLoginScreen();
 		} else if (split_msg[0].equals("name-taken")){
 			loginError.setText("That username is taken. Please try again.");
