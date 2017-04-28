@@ -84,7 +84,7 @@ public class ClientMain extends Application {
 		//Label text = new Label();
 		text.setPrefWidth(350);
 		text.setLayoutX(0);
-		text.setLayoutY(670);
+		text.setLayoutY(680);
 		text.setTextFill(Color.WHITE);
 		pane.getChildren().add(text);
 		text.setVisible(false);
@@ -92,17 +92,22 @@ public class ClientMain extends Application {
 		// box to input message
 		//TextField msgInput = new TextField();
 		msgInput.setPromptText("Enter your message here");
-		msgInput.setPrefWidth(350);
+		msgInput.setPrefWidth(700);
+		msgInput.setPrefHeight(40);
 		msgInput.setLayoutX(0);
 		msgInput.setLayoutY(640);
+		msgInput.setStyle("-fx-background-color: #d3d3d3; -fx-font: 14 arial");
 		pane.getChildren().add(msgInput);
 		msgInput.setVisible(false);
 		
 		// button to send message
 		//Button send = new Button();
 		send.setText("Send");
-		send.setLayoutX(350);
+		send.setLayoutX(710);
 		send.setLayoutY(640);
+		send.setPrefHeight(40);
+		send.setPrefWidth(70);
+		send.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
 		pane.getChildren().add(send);
 		send.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override public void handle(ActionEvent e) {
@@ -124,8 +129,11 @@ public class ClientMain extends Application {
 		send.setVisible(false);
 		
 		logoutBtn.setText("Logout");
-		logoutBtn.setLayoutX(350);
-		logoutBtn.setLayoutY(670);
+		logoutBtn.setLayoutX(900);
+		logoutBtn.setLayoutY(640);
+		logoutBtn.setPrefHeight(40);
+		logoutBtn.setPrefWidth(70);
+		logoutBtn.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
 		pane.getChildren().add(logoutBtn);
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
