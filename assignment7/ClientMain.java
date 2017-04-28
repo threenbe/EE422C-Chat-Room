@@ -40,10 +40,13 @@ public class ClientMain extends Application {
 	private int chatroomCount = 0;
 	private int currentChatroom = 0;
 	private HashMap<Integer, Tab> tabs = new HashMap<Integer, Tab>();
+	// experimental
+	private Message temp;
+	private Message tempMsg;
 	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
-	Label input = new Label();
+	//Label input = new Label();
 	TextField msgInput = new TextField();
 	Button send = new Button();
 	TextField enterNameField = new TextField();
@@ -78,12 +81,12 @@ public class ClientMain extends Application {
 		
 		// area for text
 		//Label input = new Label();
-		input.setPrefWidth(350);
+		/*input.setPrefWidth(350);
 		input.setLayoutX(0);
 		input.setLayoutY(0);
 		input.setTextFill(Color.BLACK);
 		pane.getChildren().add(input);
-		input.setVisible(false);
+		input.setVisible(false);*/
 		
 		// box to input message
 		//TextField msgInput = new TextField();
@@ -130,7 +133,7 @@ public class ClientMain extends Application {
 				passwordPrompt.setVisible(true);
 				send.setVisible(false);
 				msgInput.setVisible(false);
-				input.setVisible(false);
+				//input.setVisible(false);
 				text.setVisible(false);
 				logoutBtn.setVisible(false);
 				loginError.setText("");
@@ -243,21 +246,57 @@ public class ClientMain extends Application {
 					//String message;
 					try {
 						while ((message = client.reader.readObject()/*readLine()*/) != null) {
-							if (message instanceof Message) {
+							if (message instanceof Chatroom) {
+								Chatroom cr = (Chatroom) message;
+								Tab crTab = tabs.get(cr.getChatroomNum());
+								if (crTab == null) {
+									//createTab(cr);
+									Tab tab = new Tab();
+									tab.setText(cr.getName());
+									TextArea textArea = new TextArea();
+									tab.setContent(textArea);
+									Platform.runLater(new Runnable() {
+										@Override
+										public void run() {
+											tabs.put(cr.getChatroomNum(), tab);
+											tabPane.getTabs().add(tab);
+										}
+									});
+									
+									crTab = tabs.get(cr.getChatroomNum());
+								}
+								if (temp != null) {
+									Message msg = temp;
+									temp = null;
+									Tab tab = tabs.get(msg.getChatroomNum());
+									if (tab == null) {
+										temp = msg;
+										client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+									} else {
+										tempMsg = msg;
+										client.writer.writeObject("/getData user " + msg.getUserNum());
+									}
+								}
+							} else if (message instanceof Message) {
 								System.out.println("message read");
 								Message msg = (Message) message;
 								//TODO
-								String mesg = "User " + ServerMain.getUserName(msg.getUserNum())
-										+ " said: " + msg.getMsg();
-								TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
-								if (ta == null) {
-									createTab(msg.getChatroomNum());
-									ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
+								Tab tab = tabs.get(msg.getChatroomNum());
+								if (tab == null) {
+									temp = msg;
+									client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+								} else {
+									tempMsg = msg;
+									client.writer.writeObject("/getData user " + msg.getUserNum());
 								}
-								ta.appendText("\n" + msg);
-								//processString(mesg);
-							}
-							if (message instanceof String) {
+							} else if (message instanceof User) {
+								User user = (User) message;
+								if (user.getUserNum() == tempMsg.getUserNum()) {
+									String mesg = "User " + user.getName() + " said: " + tempMsg.getMsg();
+									TextArea ta = (TextArea) tabs.get(tempMsg.getChatroomNum()).getContent();
+									ta.appendText("\n" + mesg);
+								}
+							} else if (message instanceof String) {
 								String msg = (String) message; 
 								processString(msg);
 							}
@@ -270,6 +309,13 @@ public class ClientMain extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		tabPane.setMinWidth(560);
+		tabPane.setMinHeight(100);
+		//tabPane.getTabs().add(new Tab("Ass cheese"));
+		pane.getChildren().add(tabPane);
+		
+		
 		primaryStage.setScene(new Scene(pane, 560, 700));
 		primaryStage.show();
 	}
@@ -286,7 +332,7 @@ public class ClientMain extends Application {
 			passwordPrompt.setVisible(false);
 			send.setVisible(true);
 			msgInput.setVisible(true);
-			input.setVisible(true);
+			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
 			loginError.setText("");
@@ -300,7 +346,7 @@ public class ClientMain extends Application {
 			passwordPrompt.setVisible(false);
 			send.setVisible(true);
 			msgInput.setVisible(true);
-			input.setVisible(true);
+			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
 			loginError.setText("");
@@ -319,7 +365,7 @@ public class ClientMain extends Application {
 			Platform.runLater(new Runnable(){
 				@Override
 				public void run() {
-					input.setText(msg);
+					//input.setText(msg);
 				}
 			});
 			
@@ -329,13 +375,18 @@ public class ClientMain extends Application {
 	public Message createMessage() {
 		return new Message(currentChatroom, userNum, msgInput.getText());
 	}
-	private void createTab(int chatroom) {
-		Tab tab = new Tab();
-		tab.setText(ServerMain.getChatroomName(chatroom));
-		TextArea textArea = new TextArea();
-		tab.setContent(textArea);
-		tabs.put(chatroom, tab);
-		tabPane.getTabs().add(tab);
+	private void createTab(Chatroom cr) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Tab tab = new Tab();
+				tab.setText(cr.getName());
+				TextArea textArea = new TextArea();
+				tab.setContent(textArea);
+				tabs.put(cr.getChatroomNum(), tab);
+				tabPane.getTabs().add(tab);
+			}
+		});
 	}
 	private void removeTab(int chatroom) {
 		tabPane.getTabs().remove(tabs.get(chatroom));

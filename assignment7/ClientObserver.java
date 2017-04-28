@@ -15,7 +15,7 @@ public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implement
 	@Override
 	public void update(Observable obs, Object obj) {
 		try{
-			String message = "";
+			/*String message = "";
 			if (obj instanceof Message) {
 				Message input = (Message) obj;
 				message = "User " + ServerMain.getUserName(input.getUserNum()) + " said: " + input.getMsg();
@@ -26,7 +26,9 @@ public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implement
 				this.writeObject(obj);
 				//this.println(obj);
 				this.flush();
-			}
+			}*/
+			this.writeObject(obj);
+			this.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

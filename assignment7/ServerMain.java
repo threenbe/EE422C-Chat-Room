@@ -131,7 +131,14 @@ public class ServerMain extends Observable {
 							return;
 						}
 					}
-				}
+				} else if (msg_split[0].equals("/getData")) {
+					if (msg_split[1].equals("chatroom")) {
+						writer.writeObject(chatrooms.get(Integer.parseInt(msg_split[2])));
+					} else if (msg_split[1].equals("user")) {
+						writer.writeObject(users.get(Integer.parseInt(msg_split[2])));
+					}
+					return;
+				} 
 				setChanged();
 				notifyObservers(message);
 			} catch (IOException e) {

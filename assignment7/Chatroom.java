@@ -1,9 +1,11 @@
 package assignment7;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
-public class Chatroom extends Observable {
+public class Chatroom extends Observable implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int chatroomNum;
 	private String name;
 	private String password;
@@ -11,7 +13,7 @@ public class Chatroom extends Observable {
 	private ArrayList<Integer> members = new ArrayList<Integer>();
 	
 	public Chatroom(int num, String nm, String pw) {
-		chatroomNum = num;
+		setChatroomNum(num);
 		setName(nm);
 		setPassword(pw);
 	}
@@ -47,5 +49,17 @@ public class Chatroom extends Observable {
 	}
 	public void addHistory(Message msg) {
 		history.add(msg);
+	}
+
+
+
+	public int getChatroomNum() {
+		return chatroomNum;
+	}
+
+
+
+	public void setChatroomNum(int chatroomNum) {
+		this.chatroomNum = chatroomNum;
 	}
 }
