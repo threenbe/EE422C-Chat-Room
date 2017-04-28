@@ -241,8 +241,7 @@ public class ClientMain extends Application {
 											tabPane.getTabs().add(tab);
 										}
 									});
-									//crTab = tabs.get(cr.getChatroomNum());
-									crTab = tab;
+									crTab = tabs.get(cr.getChatroomNum());
 								} else {
 									final Tab crTab_ = crTab;
 									//crTab.setText(cr.getName());
@@ -254,29 +253,27 @@ public class ClientMain extends Application {
 									});
 								}
 								if (temp != null) {
-								//	Message msg = temp;
-									tempMsg = temp;
+									Message msg = temp;
 									temp = null;
-								//	Tab tab = tabs.get(msg.getChatroomNum());
-								//	if (tab == null) {
-								//		temp = msg;
-								//		client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
-								//	} else {
-								//		tempMsg = msg;
-								//		client.writer.writeObject("/getData user " + msg.getUserNum());
-									client.writer.writeObject("/getData user " + tempMsg.getUserNum());
-								//	}
+									Tab tab = tabs.get(msg.getChatroomNum());
+									if (tab == null) {
+										temp = msg;
+										client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+									} else {
+										tempMsg = msg;
+										client.writer.writeObject("/getData user " + msg.getUserNum());
+									}
 								}
 							} else if (message instanceof Message) {
 								Message msg = (Message) message;
-								//Tab tab = tabs.get(msg.getChatroomNum());
-								//if (tab == null) {
-								//	temp = msg;
-								//	client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
-								//} else {
+								Tab tab = tabs.get(msg.getChatroomNum());
+								if (tab == null) {
+									temp = msg;
+									client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+								} else {
 									tempMsg = msg;
 									client.writer.writeObject("/getData user " + msg.getUserNum());
-								//}
+								}
 							} else if (message instanceof User) {
 								User user = (User) message;
 								Message msg = tempMsg;
