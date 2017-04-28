@@ -30,7 +30,7 @@ public class ServerMain extends Observable {
 	}
 
 	private void setUpNetworking() throws Exception {
-		// other inits
+		// Initializations
 		users = new ArrayList<User>();
 		chatrooms = new ArrayList<Chatroom>();
 		observers = new ArrayList<ClientObserver>();
@@ -40,26 +40,19 @@ public class ServerMain extends Observable {
 		@SuppressWarnings("resource")
 		ServerSocket serverSocket = new ServerSocket(5000);
 		while (true) {
-			// make a new thread for managing each client connection
+			// Makes a new thread for each client connection
 			Socket clientSocket = serverSocket.accept();
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
 			new Thread(new Runnable(){
 				@Override
 				public void run() {
-					// TODO Add all the shit for handling a client here AFAIK
-					//String message;
 					Object message;
 					try {
-						//BufferedReader reader = new BufferedReader(
-						//		new InputStreamReader(clientSocket.getInputStream()));
 						ObjectInputStream reader = new ObjectInputStream(
 								new BufferedInputStream(clientSocket.getInputStream()));
-						//message = reader.readLine();
-						message = reader.readObject();
-						while (message != null) {
+						// Constantly checks for messages
+						while ((message = reader.readObject()) != null) {
 							processMessage(message, writer); 
-							//message = reader.readLine();
-							message = reader.readObject();
 						}
 					} catch (SocketException e) {
 						System.out.println("Client disconnected!");
@@ -74,7 +67,6 @@ public class ServerMain extends Observable {
 		}
 	}
 	private void processMessage(Object message, ClientObserver writer) {
-		// TODO eventually take this out
 		if (message instanceof String) {
 			try {
 				String msg = (String) message;
@@ -94,7 +86,6 @@ public class ServerMain extends Observable {
 					observers.add(userNum, writer);
 					chatrooms.get(0).addMember(userNum);
 					writer.writeObject("registered " + userNum + " " + msg_split[1]);
-					//writer.println("registered " + usersCount + " " + msg_split[1]);
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/SIGNIN")) {
@@ -121,7 +112,6 @@ public class ServerMain extends Observable {
 					}
 					observers.add(getUserId(this_name), writer);
 					writer.writeObject("logged-in ");
-					//writer.println("registered");
 					writer.flush();
 					return;
 				} else if (msg_split[0].equals("/LOGOUT")) {
@@ -157,15 +147,19 @@ public class ServerMain extends Observable {
 				}
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
+				cr.sendChatroom();
 			} else if (tokens[0].equals("/addMember") || tokens[0].equals("/addMembers")) {
 				int user;
+				Chatroom cr = chatrooms.get(msg.getChatroomNum());
 				for (int i = 1; i < tokens.length; i++) {
 					user = getUserId(tokens[i]);
-					if (user >= 0) chatrooms.get(msg.getChatroomNum()).addMember(user);
+					if (user >= 0) cr.addMember(user);
 				}
+				cr.sendChatroom();
 			} else if (tokens[0].equals("/changeChatroomName")) {
-				chatrooms.get(msg.getChatroomNum()).setName(tokens[1]);
-				// TODO make sure users in chatroom see this update
+				Chatroom cr = chatrooms.get(msg.getChatroomNum());
+				cr.setName(tokens[1]);
+				cr.sendChatroom();
 			} else if (tokens[0].equals("/changeNick")) {
 				users.get(msg.getUserNum()).setName(tokens[1]);
 				// TODO make sure chatrooms and users see this update
@@ -175,11 +169,9 @@ public class ServerMain extends Observable {
 				// TODO make sure users see this update
 			} else { // just plain old message
 				chatrooms.get(msg.getChatroomNum()).sendMessage(msg);
-				//setChanged();
-				//notifyObservers(msg);
 			}
 		} else {
-			System.out.println("Unfamiliar object type inputted by client. Input ignored. Fix later.");
+			System.out.println("Unfamiliar object type input by client. Input ignored. Fix later.");
 		}
 	}
 	public int getUserId(String name) {

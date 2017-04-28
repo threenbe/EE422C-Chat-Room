@@ -19,7 +19,10 @@ public class Chatroom extends Observable implements Serializable {
 	}
 	
 	
-	
+	public void sendChatroom() {
+		setChanged();
+		notifyObservers(this);
+	}
 	public void sendMessage(Message message) {
 		setChanged();
 		notifyObservers(message);
