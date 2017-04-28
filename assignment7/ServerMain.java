@@ -149,8 +149,11 @@ public class ServerMain extends Observable {
 		} else if (message instanceof Message) {
 			Message msg = (Message) message;
 			String[] tokens = msg.getMsg().split(" ");
-			if (tokens[0].equals("/createChatroom")
-			 || tokens[0].equals("/newroom")) {
+			String s = tokens[0];
+			if (s.equals("/createChatroom")
+			 || s.equals("/newroom")
+			 || s.equals("/pm")
+			 || s.equals("/message")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
 				cr.addMember(msg.getUserNum());
 				for (int i = 1; i < tokens.length; i++) {
@@ -160,8 +163,8 @@ public class ServerMain extends Observable {
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
 				cr.sendChatroom();
-			} else if (tokens[0].equals("/addMember")
-					|| tokens[0].equals("/addMembers")) {
+			} else if (s.equals("/addMember")
+					|| s.equals("/addMembers")) {
 				int user;
 				Chatroom cr = chatrooms.get(msg.getChatroomNum());
 				for (int i = 1; i < tokens.length; i++) {
@@ -169,29 +172,33 @@ public class ServerMain extends Observable {
 					if (user >= 0) cr.addMember(user);
 				}
 				cr.sendChatroom();
-			} else if (tokens[0].equals("/changeChatroomName")
-					|| tokens[0].equals("/chatname")
-					|| tokens[0].equals("/roomname")) {
+			} else if (s.equals("/changeChatroomName")
+					|| s.equals("/chatname")
+					|| s.equals("/roomname")) {
 				if (tokens.length > 1) {
 					Chatroom cr = chatrooms.get(msg.getChatroomNum());
 					cr.setName(tokens[1]);
 					cr.sendChatroom();
 				}
-			} else if (tokens[0].equals("/changeNickname")
-					|| tokens[0].equals("/nick")
-					|| tokens[0].equals("/changename")) {
+			} else if (s.equals("/changeNickname")
+					|| s.equals("/nick")
+					|| s.equals("/changename")) {
 				if (tokens.length > 1) {
 					users.get(msg.getUserNum()).setName(tokens[1]);
 				}
 				// TODO make sure chatrooms and users see this update
-			} else if (tokens[0].equals("/addFriend")
-					|| tokens[0].equals("/addFriends")
-					|| tokens[0].equals("/add")) {
+			} else if (s.equals("/addFriend")
+					|| s.equals("/addFriends")
+					|| s.equals("/add")) {
 				for (int i = 1; i < tokens.length; i++) {
 					int id = getUserId(tokens[i]);
 					if (id >= 0) users.get(msg.getUserNum()).addFriend(id);
 				}
 				// TODO make sure users see this update
+			} else if (s.equals("/leaveChatroom")
+					|| s.equals("/leave")) {
+				int cr = msg.getChatroomNum();
+				chatrooms.get(cr).removeMember(msg.getUserNum());
 			} else { // just plain old message
 				chatrooms.get(msg.getChatroomNum()).sendMessage(msg);
 			}
