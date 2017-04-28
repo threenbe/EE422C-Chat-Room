@@ -47,7 +47,6 @@ public class ClientMain extends Application {
 	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
-	//Label input = new Label();
 	TextField msgInput = new TextField();
 	Button send = new Button();
 	TextField enterNameField = new TextField();
@@ -80,15 +79,6 @@ public class ClientMain extends Application {
 		text.setTextFill(Color.BLACK);
 		pane.getChildren().add(text);
 		text.setVisible(false);
-		
-		// area for text
-		//Label input = new Label();
-		/*input.setPrefWidth(350);
-		input.setLayoutX(0);
-		input.setLayoutY(0);
-		input.setTextFill(Color.BLACK);
-		pane.getChildren().add(input);
-		input.setVisible(false);*/
 		
 		// box to input message
 		//TextField msgInput = new TextField();
@@ -138,7 +128,6 @@ public class ClientMain extends Application {
 				passwordPrompt.setVisible(true);
 				send.setVisible(false);
 				msgInput.setVisible(false);
-				//input.setVisible(false);
 				text.setVisible(false);
 				logoutBtn.setVisible(false);
 				loginError.setText("");
@@ -147,7 +136,6 @@ public class ClientMain extends Application {
 				try {
 					client.writer.writeObject("/LOGOUT " + userNum);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -202,7 +190,6 @@ public class ClientMain extends Application {
 					String name = enterNameField.getText();
 					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
-						//client.writer.println("/SIGNIN " + name + " " + password);
 						client.writer.writeObject("/SIGNIN " + name + " " + password);
 						client.writer.flush();
 					}
@@ -229,7 +216,6 @@ public class ClientMain extends Application {
 					String name = enterNameField.getText();
 					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
-						//client.writer.println("/SIGNUP " + name + " " + password);
 						client.writer.writeObject("/SIGNUP " + name + " " + password);
 						client.writer.flush();
 					}
@@ -246,25 +232,20 @@ public class ClientMain extends Application {
 		try {
 			@SuppressWarnings("resource")
 			Socket socket = new Socket("127.0.0.1", 5000);
-			//client.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			client.reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			//client.writer = new PrintWriter(socket.getOutputStream());
 			client.writer = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("connected");
 			new Thread(new Runnable(){
 				@Override
 				public void run() {
 					Object message;
-					//String message;
 					try {
-						while ((message = client.reader.readObject()/*readLine()*/) != null) {
+						while ((message = client.reader.readObject()) != null) {
 							if (message instanceof Chatroom) {
 								Chatroom cr = (Chatroom) message;
 								Tab crTab = tabs.get(cr.getChatroomNum());
 								if (crTab == null) {
-									//createTab(cr);
 									Tab tab = new Tab();
-									tab.setText(cr.getName());
 									TextArea textArea = new TextArea();
 									tab.setContent(textArea);
 									Platform.runLater(new Runnable() {
@@ -274,9 +255,9 @@ public class ClientMain extends Application {
 											tabPane.getTabs().add(tab);
 										}
 									});
-									
 									crTab = tabs.get(cr.getChatroomNum());
 								}
+								crTab.setText(cr.getName());
 								if (temp != null) {
 									Message msg = temp;
 									temp = null;
@@ -290,9 +271,7 @@ public class ClientMain extends Application {
 									}
 								}
 							} else if (message instanceof Message) {
-								System.out.println("message read");
 								Message msg = (Message) message;
-								//TODO
 								Tab tab = tabs.get(msg.getChatroomNum());
 								if (tab == null) {
 									temp = msg;
@@ -350,7 +329,6 @@ public class ClientMain extends Application {
 			passwordPrompt.setVisible(false);
 			send.setVisible(true);
 			msgInput.setVisible(true);
-			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
 			tabPane.setVisible(true);
@@ -365,7 +343,6 @@ public class ClientMain extends Application {
 			passwordPrompt.setVisible(false);
 			send.setVisible(true);
 			msgInput.setVisible(true);
-			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
 			tabPane.setVisible(true);
@@ -380,16 +357,7 @@ public class ClientMain extends Application {
 		} else if (split_msg[0].equals("wrong-password")) {
 			loginError.setText("Password is incorrect. Please try again.");
 		} else {
-			// TODO make this append instead
-			final String msg = ((String)message);
-			Platform.runLater(new Runnable(){
-				@Override
-				public void run() {
-					//input.setText(msg);
-				}
-			});
-			
-			
+			System.out.println("String input not recognized as command. Fix later.");
 		}
 	}
 	public Message createMessage() {
@@ -404,19 +372,6 @@ public class ClientMain extends Application {
 		if (!msgInput.getText().equals(""))
 			return new Message(currentChatroom, userNum, msgInput.getText());
 		else return null;
-	}
-	private void createTab(Chatroom cr) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				Tab tab = new Tab();
-				tab.setText(cr.getName());
-				TextArea textArea = new TextArea();
-				tab.setContent(textArea);
-				tabs.put(cr.getChatroomNum(), tab);
-				tabPane.getTabs().add(tab);
-			}
-		});
 	}
 	private void removeTab(int chatroom) {
 		tabPane.getTabs().remove(tabs.get(chatroom));
