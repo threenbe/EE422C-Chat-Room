@@ -31,9 +31,7 @@ import javafx.stage.Stage;
 
 public class ClientMain extends Application {
 	
-	//private BufferedReader reader;
 	private ObjectInputStream reader;
-	//private PrintWriter writer;
 	private ObjectOutputStream writer;
 	private User user;
 	private int userNum;
@@ -56,6 +54,7 @@ public class ClientMain extends Application {
 	Text loginError = new Text();
 	Pane pane = new Pane();
 	TabPane tabPane = new TabPane();
+	Tab globalTab = new Tab("Global");
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -64,8 +63,18 @@ public class ClientMain extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		ClientMain client = new ClientMain();
-		// set up JavaFX window
 		
+		Platform.setImplicitExit(true);
+		primaryStage.setOnCloseRequest((ae) -> {
+			try {
+				client.writer.writeObject("/LOGOUT " + userNum);
+			} catch (Exception e1) {
+			}
+			Platform.exit();
+			System.exit(0);
+		});
+		
+		// set up JavaFX window
 		pane.setBackground(new Background(new BackgroundFill(Color.gray(0.175), CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		// area for text
@@ -117,6 +126,14 @@ public class ClientMain extends Application {
 		pane.getChildren().add(logoutBtn);
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
+				for (HashMap.Entry<Integer, Tab> t : tabs.entrySet()) {
+					//if (t.getKey() != 0) 
+						tabPane.getTabs().remove(t.getValue());
+				}
+				tabs.clear();
+				tabPane.getTabs().add(globalTab);
+				tabs.put(0, globalTab);
+				
 				openLoginScreen();
 				try {
 					client.writer.writeObject("/LOGOUT " + userNum);
@@ -301,7 +318,7 @@ public class ClientMain extends Application {
 		tabPane.setMinHeight(100);
 		pane.getChildren().add(tabPane);
 		//adding global chatroom right off the bat
-		Tab globalTab = new Tab("Global");
+		//Tab globalTab = new Tab("Global");
 		globalTab.setContent(new TextArea());
 		tabPane.getTabs().add(globalTab);
 		tabs.put(0, globalTab);

@@ -88,12 +88,28 @@ public class ServerMain extends Observable {
 				} else if (msg_split[0].equals("/SIGNIN")) {
 					String this_name = msg_split[1];
 					String this_password = msg_split[2];
-					if (getUserId(this_name) == -1) {
+					int id = getUserId(this_name);
+					if (id == -1) {
 						writer.writeObject("name-not-found ");
 						return;
 					}
-					if (this_password.equals(passwords.get(getUserId(this_name)))) {
-						for (User u : users) {
+					if (this_password.equals(passwords.get(id))) {
+						User u = users.get(id);
+						if (u.isOnline()) {
+							writer.writeObject("already-online ");
+							return;
+						} else {
+							u.setOnline(true);
+							for (Chatroom c : chatrooms) {
+								c.updateMember(id, writer);
+								c.sendChatroom();
+							}
+							observers.set(id, writer);
+							writer.writeObject("logged-in " + id + " " + this_name);
+							writer.flush();
+							return;
+						}
+						/*for (User u : users) {
 							if (u.getName().equals(this_name)) {
 								if (u.isOnline()) {
 									writer.writeObject("already-online ");
@@ -102,15 +118,11 @@ public class ServerMain extends Observable {
 									u.setOnline(true);
 								}
 							}
-						}
+						}*/
 					} else {
 						writer.writeObject("wrong-password ");
 						return;
 					}
-					observers.add(getUserId(this_name), writer);
-					writer.writeObject("logged-in " + getUserId(this_name) + " " + this_name);
-					writer.flush();
-					return;
 				} else if (msg_split[0].equals("/LOGOUT")) {
 					for (User u : users) {
 						if (u.getName().equals(getUserName(Integer.parseInt(msg_split[1])))) {
