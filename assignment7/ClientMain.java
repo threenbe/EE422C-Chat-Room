@@ -69,7 +69,7 @@ public class ClientMain extends Application {
 		ClientMain client = new ClientMain();
 		// set up JavaFX window
 		
-		pane.setBackground(new Background(new BackgroundFill(Color.gray(0.1), CornerRadii.EMPTY, Insets.EMPTY)));
+		pane.setBackground(new Background(new BackgroundFill(Color.gray(0.175), CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		// area for text
 		//Label text = new Label();
