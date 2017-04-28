@@ -106,10 +106,13 @@ public class ClientMain extends Application {
 		    	try {
 		    		// TODO
 		    		//client.writer.println(msgInput.getText());
-		    		client.writer.writeObject(createMessage());
-		    		client.writer.flush();
-		    		msgInput.setText("");
-		    		text.setText("Message sent.");
+		    		Message outgoing = createMessage();
+		    		if (outgoing != null) {
+		    			client.writer.writeObject(createMessage());
+		    			client.writer.flush();
+		    			msgInput.setText("");
+		    			text.setText("Message sent.");
+		    		}
 	    		} catch (Exception f){
 	    			text.setText("Error sending message!");
 	    		}
@@ -378,7 +381,9 @@ public class ClientMain extends Application {
 		}
 	}
 	public Message createMessage() {
-		return new Message(currentChatroom, userNum, msgInput.getText());
+		if (!msgInput.getText().equals(""))
+			return new Message(currentChatroom, userNum, msgInput.getText());
+		else return null;
 	}
 	private void createTab(Chatroom cr) {
 		Platform.runLater(new Runnable() {
