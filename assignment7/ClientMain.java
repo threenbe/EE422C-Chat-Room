@@ -136,6 +136,7 @@ public class ClientMain extends Application {
 				logoutBtn.setVisible(false);
 				loginError.setText("");
 				loginError.setVisible(true);
+				tabPane.setVisible(false);
 				try {
 					client.writer.writeObject("/LOGOUT " + userNum);
 				} catch (IOException e1) {
@@ -333,6 +334,7 @@ public class ClientMain extends Application {
 			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
+			tabPane.setVisible(true);
 			loginError.setText("");
 			loginError.setVisible(false);
 		} else if (split_msg[0].equals("logged-in")) {
@@ -347,6 +349,7 @@ public class ClientMain extends Application {
 			//input.setVisible(true);
 			text.setVisible(true);
 			logoutBtn.setVisible(true);
+			tabPane.setVisible(true);
 			loginError.setText("");
 			loginError.setVisible(false);
 		} else if (split_msg[0].equals("name-taken")){
