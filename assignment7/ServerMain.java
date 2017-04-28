@@ -1,15 +1,12 @@
 package assignment7;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 
 public class ServerMain extends Observable {
@@ -165,7 +162,7 @@ public class ServerMain extends Observable {
 				// TODO make sure chatrooms and users see this update
 			} else if (tokens[0].equals("/addFriend")) {
 				int id = getUserId(tokens[1]);
-				users.get(msg.getUserNum()).addFriend(id);
+				if (id >= 0) users.get(msg.getUserNum()).addFriend(id);
 				// TODO make sure users see this update
 			} else { // just plain old message
 				chatrooms.get(msg.getChatroomNum()).sendMessage(msg);

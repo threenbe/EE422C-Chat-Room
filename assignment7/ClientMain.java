@@ -1,12 +1,9 @@
 package assignment7;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -120,19 +117,7 @@ public class ClientMain extends Application {
 		pane.getChildren().add(logoutBtn);
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				registerBtn.setVisible(true);
-				signIn.setVisible(true);
-				enterPasswordField.setVisible(true);
-				enterNameField.setVisible(true);
-				namePrompt.setVisible(true);
-				passwordPrompt.setVisible(true);
-				send.setVisible(false);
-				msgInput.setVisible(false);
-				text.setVisible(false);
-				logoutBtn.setVisible(false);
-				loginError.setText("");
-				loginError.setVisible(true);
-				tabPane.setVisible(false);
+				openLoginScreen();
 				try {
 					client.writer.writeObject("/LOGOUT " + userNum);
 				} catch (IOException e1) {
@@ -249,11 +234,10 @@ public class ClientMain extends Application {
 									TextArea textArea = new TextArea();
 									tab.setContent(textArea);
 									tab.setText(cr.getName());
-									tabs.put(cr.getChatroomNum(), tab);
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
-											
+											tabs.put(cr.getChatroomNum(), tab);
 											tabPane.getTabs().add(tab);
 										}
 									});
@@ -334,33 +318,9 @@ public class ClientMain extends Application {
 		if (split_msg[0].equals("registered")) {
 			user = new User(Integer.parseInt(split_msg[1]), split_msg[2]);
 			userNum = user.getUserNum();
-			registerBtn.setVisible(false);
-			signIn.setVisible(false);
-			enterPasswordField.setVisible(false);
-			enterNameField.setVisible(false);
-			namePrompt.setVisible(false);
-			passwordPrompt.setVisible(false);
-			send.setVisible(true);
-			msgInput.setVisible(true);
-			text.setVisible(true);
-			logoutBtn.setVisible(true);
-			tabPane.setVisible(true);
-			loginError.setText("");
-			loginError.setVisible(false);
+			closeLoginScreen();
 		} else if (split_msg[0].equals("logged-in")) {
-			registerBtn.setVisible(false);
-			signIn.setVisible(false);
-			enterPasswordField.setVisible(false);
-			enterNameField.setVisible(false);
-			namePrompt.setVisible(false);
-			passwordPrompt.setVisible(false);
-			send.setVisible(true);
-			msgInput.setVisible(true);
-			text.setVisible(true);
-			logoutBtn.setVisible(true);
-			tabPane.setVisible(true);
-			loginError.setText("");
-			loginError.setVisible(false);
+			closeLoginScreen();
 		} else if (split_msg[0].equals("name-taken")){
 			loginError.setText("That username is taken. Please try again.");
 		} else if (split_msg[0].equals("name-not-found")){
@@ -372,6 +332,36 @@ public class ClientMain extends Application {
 		} else {
 			System.out.println("String input not recognized as command. Fix later.");
 		}
+	}
+	public void closeLoginScreen() {
+		registerBtn.setVisible(false);
+		signIn.setVisible(false);
+		enterPasswordField.setVisible(false);
+		enterNameField.setVisible(false);
+		namePrompt.setVisible(false);
+		passwordPrompt.setVisible(false);
+		send.setVisible(true);
+		msgInput.setVisible(true);
+		text.setVisible(true);
+		logoutBtn.setVisible(true);
+		tabPane.setVisible(true);
+		loginError.setText("");
+		loginError.setVisible(false);
+	}
+	public void openLoginScreen() {
+		registerBtn.setVisible(true);
+		signIn.setVisible(true);
+		enterPasswordField.setVisible(true);
+		enterNameField.setVisible(true);
+		namePrompt.setVisible(true);
+		passwordPrompt.setVisible(true);
+		send.setVisible(false);
+		msgInput.setVisible(false);
+		text.setVisible(false);
+		logoutBtn.setVisible(false);
+		loginError.setText("");
+		loginError.setVisible(true);
+		tabPane.setVisible(false);
 	}
 	public Message createMessage() {
 		int currentChatroom = 0;
@@ -386,6 +376,7 @@ public class ClientMain extends Application {
 			return new Message(currentChatroom, userNum, msgInput.getText());
 		else return null;
 	}
+	@SuppressWarnings("unused")
 	private void removeTab(int chatroom) {
 		tabPane.getTabs().remove(tabs.get(chatroom));
 		tabs.remove(chatroom);
