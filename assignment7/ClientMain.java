@@ -76,7 +76,7 @@ public class ClientMain extends Application {
 		text.setPrefWidth(350);
 		text.setLayoutX(0);
 		text.setLayoutY(670);
-		text.setTextFill(Color.BLACK);
+		text.setTextFill(Color.WHITE);
 		pane.getChildren().add(text);
 		text.setVisible(false);
 		
