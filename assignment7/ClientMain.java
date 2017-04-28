@@ -14,6 +14,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,6 +23,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -65,6 +69,8 @@ public class ClientMain extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		ClientMain client = new ClientMain();
 		// set up JavaFX window
+		
+		pane.setBackground(new Background(new BackgroundFill(Color.gray(0.1), CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		// area for text
 		//Label text = new Label();
@@ -152,11 +158,13 @@ public class ClientMain extends Application {
 		enterNameField.setPrefWidth(160);
 		enterNameField.setLayoutX(200);
 		enterNameField.setLayoutY(300);
+		enterNameField.setStyle("-fx-background-color: #d3d3d3; -fx-font: 14 arial");
 		pane.getChildren().add(enterNameField);
 		//Text namePrompt = new Text();
 		namePrompt.setLayoutX(135);
 		namePrompt.setLayoutY(320);
 		namePrompt.setFont(Font.font("Verdana", 18));
+		namePrompt.setFill(Color.WHITE);
 		namePrompt.setText("Name: ");
 		pane.getChildren().add(namePrompt);
 		
@@ -164,11 +172,13 @@ public class ClientMain extends Application {
 		enterPasswordField.setPrefWidth(160);
 		enterPasswordField.setLayoutX(200);
 		enterPasswordField.setLayoutY(340);
+		enterPasswordField.setStyle("-fx-background-color: #d3d3d3; -fx-font: 14 arial");
 		pane.getChildren().add(enterPasswordField);
 		//Text passwordPrompt = new Text();
 		passwordPrompt.setLayoutX(105);
 		passwordPrompt.setLayoutY(360);
 		passwordPrompt.setFont(Font.font("Verdana", 18));
+		passwordPrompt.setFill(Color.WHITE);
 		passwordPrompt.setText("Password: ");
 		pane.getChildren().add(passwordPrompt);
 		
@@ -182,6 +192,7 @@ public class ClientMain extends Application {
 		signIn.setText("Sign In");
 		signIn.setPrefWidth(100);
 		signIn.setPrefHeight(20);
+		signIn.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
 		signIn.setLayoutX(230);
 		signIn.setLayoutY(390);
 		pane.getChildren().add(signIn);
@@ -210,6 +221,7 @@ public class ClientMain extends Application {
 		registerBtn.setPrefHeight(20);
 		registerBtn.setLayoutX(230);
 		registerBtn.setLayoutY(420);
+		registerBtn.setStyle("-fx-font: 14 arial; -fx-base: #a9a9a9");
 		pane.getChildren().add(registerBtn);
 		registerBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
