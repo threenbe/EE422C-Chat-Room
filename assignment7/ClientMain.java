@@ -36,8 +36,6 @@ public class ClientMain extends Application {
 	private ObjectOutputStream writer;
 	private User user;
 	private int userNum;
-	private int chatroomCount = 0;
-	private int currentChatroom = 0;
 	private HashMap<Integer, Tab> tabs = new HashMap<Integer, Tab>();
 	// experimental
 	private Message temp;
@@ -293,9 +291,11 @@ public class ClientMain extends Application {
 								}
 							} else if (message instanceof User) {
 								User user = (User) message;
-								if (user.getUserNum() == tempMsg.getUserNum()) {
-									String mesg = "User " + user.getName() + " said: " + tempMsg.getMsg();
-									TextArea ta = (TextArea) tabs.get(tempMsg.getChatroomNum()).getContent();
+								Message msg = tempMsg;
+								tempMsg = null;
+								if (user.getUserNum() == msg.getUserNum()) {
+									String mesg = "User " + user.getName() + " said: " + msg.getMsg();
+									TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
 									ta.appendText("\n" + mesg);
 								}
 							} else if (message instanceof String) {
@@ -381,6 +381,14 @@ public class ClientMain extends Application {
 		}
 	}
 	public Message createMessage() {
+		int currentChatroom = 0;
+		Tab tab = tabPane.getSelectionModel().getSelectedItem();
+		for (HashMap.Entry<Integer, Tab> t : tabs.entrySet()) {
+			if (tab.equals(t.getValue())) {
+				currentChatroom = t.getKey();
+				break;
+			}
+		}
 		if (!msgInput.getText().equals(""))
 			return new Message(currentChatroom, userNum, msgInput.getText());
 		else return null;
