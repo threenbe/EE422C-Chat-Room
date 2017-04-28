@@ -260,7 +260,14 @@ public class ClientMain extends Application {
 									//crTab = tabs.get(cr.getChatroomNum());
 									crTab = tab;
 								} else {
-									crTab.setText(cr.getName());
+									final Tab crTab_ = crTab;
+									//crTab.setText(cr.getName());
+									Platform.runLater(new Runnable() {
+										@Override
+										public void run() {
+											crTab_.setText(cr.getName());
+										}
+									});
 								}
 								if (temp != null) {
 								//	Message msg = temp;

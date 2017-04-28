@@ -27,6 +27,7 @@ public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implement
 				//this.println(obj);
 				this.flush();
 			}*/
+			this.reset();
 			this.writeObject(obj);
 			this.flush();
 		} catch (IOException e) {
