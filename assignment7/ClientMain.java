@@ -260,6 +260,10 @@ public class ClientMain extends Application {
 								if (crTab == null) {
 									Tab tab = new Tab();
 									TextArea textArea = new TextArea();
+									textArea.setPrefWidth(1000);
+									textArea.setPrefHeight(600);
+									textArea.setStyle("-fx-control-inner-background: #555555; -fx-font-family: verdana; -fx-text-fill: #e5e4e2");
+									textArea.setEditable(false);
 									tab.setContent(textArea);
 									tab.setText(cr.getName());
 									Platform.runLater(new Runnable() {
@@ -333,6 +337,7 @@ public class ClientMain extends Application {
 		globalTextArea.setPrefWidth(1000);
 		globalTextArea.setPrefHeight(600);
 		globalTextArea.setStyle("-fx-control-inner-background: #555555; -fx-font-family: verdana; -fx-text-fill: #e5e4e2");
+		globalTextArea.setEditable(false);
 		globalTab.setContent(globalTextArea);
 		tabPane.getTabs().add(globalTab);
 		tabs.put(0, globalTab);
