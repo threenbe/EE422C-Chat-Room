@@ -203,11 +203,16 @@ public class ClientMain extends Application {
 					String name = enterNameField.getText();
 					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
-						client.writer.writeObject("/SIGNIN " + name + " " + password);
-						client.writer.flush();
+						if (name.contains(" ") || password.contains(" ")) {
+							loginError.setText("Your username or password may not contain spaces.");
+						} else {
+							loginError.setText("");
+							client.writer.writeObject("/SIGNIN " + name + " " + password);
+							client.writer.flush();
+							enterNameField.clear();
+							enterPasswordField.clear();
+						}
 					}
-					enterNameField.clear();
-					enterPasswordField.clear();
 				} catch (IOException f) {
 					f.printStackTrace();
 				}
@@ -229,11 +234,16 @@ public class ClientMain extends Application {
 					String name = enterNameField.getText();
 					String password = enterPasswordField.getText();
 					if (!name.equals("") && !password.equals("")) {
-						client.writer.writeObject("/SIGNUP " + name + " " + password);
-						client.writer.flush();
+						if (name.contains(" ") || password.contains(" ")) {
+							loginError.setText("Your username or password may not contain spaces.");
+						} else {
+							loginError.setText("");
+							client.writer.writeObject("/SIGNUP " + name + " " + password);
+							client.writer.flush();
+							enterNameField.clear();
+							enterPasswordField.clear();
+						}
 					}
-					enterNameField.clear();
-					enterPasswordField.clear();
 				} catch (IOException f) {
 					f.printStackTrace();
 				}
