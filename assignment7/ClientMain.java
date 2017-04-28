@@ -248,6 +248,7 @@ public class ClientMain extends Application {
 									Tab tab = new Tab();
 									TextArea textArea = new TextArea();
 									tab.setContent(textArea);
+									tab.setText(cr.getName());
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
@@ -256,8 +257,9 @@ public class ClientMain extends Application {
 										}
 									});
 									crTab = tabs.get(cr.getChatroomNum());
+								} else {
+									crTab.setText(cr.getName());
 								}
-								crTab.setText(cr.getName());
 								if (temp != null) {
 									Message msg = temp;
 									temp = null;
