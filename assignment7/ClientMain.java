@@ -357,20 +357,21 @@ public class ClientMain extends Application {
 									client.writer.flush();
 								}
 							} else if (message instanceof User) {
-								User user = (User) message;
+								User user_ = (User) message;
 								if (temp4User != null && temp4User instanceof Message) {
 									Message msg =  (Message) temp4User;
 									temp4User = null;
-									if (user.getUserNum() == msg.getUserNum()) {
-										String mesg = user.getName() + ": " + msg.getMsg();
+									if (user_.getUserNum() == msg.getUserNum()) {
+										String mesg = user_.getName() + ": " + msg.getMsg();
 										TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
 										ta.appendText("\n" + mesg);
 									}
 								} else if (temp4User != null && temp4User instanceof String) {
 									String nm = (String) temp4User;
 									temp4User = null;
-									if (user.getName().equals(nm)) {
-										userNum = user.getUserNum();
+									if (user_.getName().equals(nm)) {
+										userNum = user_.getUserNum();
+										user = new User(userNum, user_.getName());
 										client.writer.writeObject("/SIGNIN " + loginName + " " + loginPassword);
 										client.writer.flush();
 									}
@@ -380,7 +381,7 @@ public class ClientMain extends Application {
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
-											crTab.setText(user.getName());	
+											crTab.setText(user_.getName());	
 										}
 									});
 								}
