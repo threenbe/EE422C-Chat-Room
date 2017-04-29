@@ -41,6 +41,7 @@ public class ClientMain extends Application {
 	// experimental
 	private Message temp;
 	private Object temp4User;
+	private Tab tempTab;
 	
 	private String loginName;
 	private String loginPassword;
@@ -304,6 +305,7 @@ public class ClientMain extends Application {
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
+											tempTab = tab;
 											tabs.put(cr.getChatroomNum(), tab);
 											tabPane.getTabs().add(tab);
 										}
@@ -377,11 +379,14 @@ public class ClientMain extends Application {
 									}
 								} else if (temp4User != null && temp4User instanceof Chatroom) {
 									Chatroom cr = (Chatroom) temp4User;
-									final Tab crTab = tabs.get(cr.getChatroomNum());
+									temp4User = null;
+									final Tab crTab = tempTab;//tabs.get(cr.getChatroomNum());
+									String userNm = user_.getName();
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
-											crTab.setText(user_.getName());	
+											if (crTab != null && user_ != null) crTab.setText(userNm);
+											tempTab = null;
 										}
 									});
 								}
