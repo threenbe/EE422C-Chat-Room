@@ -370,6 +370,7 @@ public class ClientMain extends Application {
 									String nm = (String) temp4User;
 									temp4User = null;
 									if (user.getName().equals(nm)) {
+										userNum = user.getUserNum();
 										client.writer.writeObject("/SIGNIN " + loginName + " " + loginPassword);
 										client.writer.flush();
 									}
