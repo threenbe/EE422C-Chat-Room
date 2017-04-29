@@ -9,6 +9,7 @@ public class Chatroom extends Observable implements Serializable {
 	private int chatroomNum;
 	private String name;
 	private String password;
+	private boolean isPM;
 	private ArrayList<Message> history = new ArrayList<Message>();
 	private ArrayList<Integer> members = new ArrayList<Integer>();
 	
@@ -16,8 +17,16 @@ public class Chatroom extends Observable implements Serializable {
 		setChatroomNum(num);
 		setName(nm);
 		setPassword(pw);
+		isPM = false;
 	}
 	
+	public void setPM() {
+		isPM = true;
+	}
+	
+	public boolean isPM() {
+		return isPM;
+	}
 	
 	public void sendChatroom() {
 		setChanged();

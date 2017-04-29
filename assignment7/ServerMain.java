@@ -151,9 +151,7 @@ public class ServerMain extends Observable {
 			String[] tokens = msg.getMsg().split(" ");
 			String s = tokens[0];
 			if (s.equals("/createChatroom")
-			 || s.equals("/newroom")
-			 || s.equals("/pm")
-			 || s.equals("/message")) {
+			 || s.equals("/newroom")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
 				cr.addMember(msg.getUserNum());
 				for (int i = 1; i < tokens.length; i++) {
@@ -163,13 +161,25 @@ public class ServerMain extends Observable {
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
 				cr.sendChatroom();
+			} else if (s.equals("/pm")
+					|| s.equals("message")) {
+				Chatroom cr = new Chatroom(chatroomsCount, "Placeholder", "");
+				cr.addMember(msg.getUserNum());
+				int id = getUserId(tokens[1]);
+				if (id >= 0) cr.addMember(id);
+				cr.setPM();
+				chatrooms.add(chatroomsCount, cr);
+				chatroomsCount++;
+				cr.sendChatroom();
 			} else if (s.equals("/addMember")
 					|| s.equals("/addMembers")) {
 				int user;
 				Chatroom cr = chatrooms.get(msg.getChatroomNum());
-				for (int i = 1; i < tokens.length; i++) {
-					user = getUserId(tokens[i]);
-					if (user >= 0) cr.addMember(user);
+				if (!cr.isPM()) {
+					for (int i = 1; i < tokens.length; i++) {
+						user = getUserId(tokens[i]);
+						if (user >= 0) cr.addMember(user);
+					}
 				}
 				cr.sendChatroom();
 			} else if (s.equals("/changeChatroomName")

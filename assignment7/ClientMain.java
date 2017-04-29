@@ -284,7 +284,7 @@ public class ClientMain extends Application {
 									textArea.setEditable(false);
 									tab.setContent(textArea);
 									//tab.setText(cr.getName());
-									if (cr.numMembers() != 2) {
+									if (!cr.isPM()) {
 										tab.setText(cr.getName());
 									} else {
 										temp4User = cr;
@@ -305,7 +305,7 @@ public class ClientMain extends Application {
 										@Override
 										public void run() {
 											try {
-												if (cr.numMembers() != 2) {
+												if (!cr.isPM()) {
 													crTab_.setText(cr.getName());
 												} else {
 													temp4User = cr;
