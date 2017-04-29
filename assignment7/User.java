@@ -2,26 +2,25 @@ package assignment7;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+/**
+ * User stores a unique id, name, whether or not the user is online,
+ * and a friendlist of a person/login. 
+ */
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int userNum;
 	private String name;
 	private boolean isOnline;
 	private ArrayList<Integer> friends = new ArrayList<Integer>();
-	//private ArrayList<User> friends = new ArrayList<User>();
-	
+	// Constructor
 	public User(int num, String nm) {
 		setUserNum(num);
 		setName(nm);
 	}
-	
-	
-	
+	// Functions below are pretty self-explanatory
 	public void addFriend(int friend) {
 		friends.add(friend);
 	}
-	
 	public ArrayList<Integer> getFriends() {
 		return friends;
 	}
@@ -40,11 +39,9 @@ public class User implements Serializable {
 	public void setUserNum(int userNum) {
 		this.userNum = userNum;
 	}
-
 	public boolean isOnline() {
 		return isOnline;
 	}
-
 	public void setOnline(boolean isOnline) {
 		this.isOnline = isOnline;
 	}

@@ -72,6 +72,7 @@ public class ServerMain extends Observable {
 					for (User u : users) {
 						if (u.getName().equals(msg_split[1])) {
 							writer.writeObject("name-taken ");
+							writer.flush();
 							return;
 						}
 					}
@@ -91,12 +92,14 @@ public class ServerMain extends Observable {
 					int id = getUserId(this_name);
 					if (id == -1) {
 						writer.writeObject("name-not-found ");
+						writer.flush();
 						return;
 					}
 					if (this_password.equals(passwords.get(id))) {
 						User u = users.get(id);
 						if (u.isOnline()) {
 							writer.writeObject("already-online ");
+							writer.flush();
 							return;
 						} else {
 							u.setOnline(true);
@@ -113,6 +116,7 @@ public class ServerMain extends Observable {
 						}
 					} else {
 						writer.writeObject("wrong-password ");
+						writer.flush();
 						return;
 					}
 				} else if (msg_split[0].equals("/LOGOUT")) {
@@ -135,8 +139,14 @@ public class ServerMain extends Observable {
 				} else if (msg_split[0].equals("/getData")) {
 					if (msg_split[1].equals("chatroom")) {
 						writer.writeObject(chatrooms.get(Integer.parseInt(msg_split[2])));
+						writer.flush();
+					} else if (msg_split[1].equals("userstring")) {
+						int id = getUserId(msg_split[2]);
+						writer.writeObject(users.get(id));
+						writer.flush();
 					} else if (msg_split[1].equals("user")) {
 						writer.writeObject(users.get(Integer.parseInt(msg_split[2])));
+						writer.flush();
 					}
 					return;
 				}

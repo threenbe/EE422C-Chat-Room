@@ -42,6 +42,9 @@ public class ClientMain extends Application {
 	private Message temp;
 	private Object temp4User;
 	
+	private String loginName;
+	private String loginPassword;
+	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
 	TextField msgInput = new TextField();
@@ -71,6 +74,7 @@ public class ClientMain extends Application {
 		primaryStage.setOnCloseRequest((ae) -> {
 			try {
 				client.writer.writeObject("/LOGOUT " + userNum);
+				client.writer.flush();
 			} catch (Exception e1) {
 			}
 			Platform.exit();
@@ -156,6 +160,7 @@ public class ClientMain extends Application {
 				openLoginScreen();
 				try {
 					client.writer.writeObject("/LOGOUT " + userNum);
+					client.writer.flush();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -215,7 +220,11 @@ public class ClientMain extends Application {
 							loginError.setText("Your username or password may not contain spaces.");
 						} else {
 							loginError.setText("");
-							client.writer.writeObject("/SIGNIN " + name + " " + password);
+							temp4User = name;
+							loginName = name;
+							loginPassword = password;
+							client.writer.writeObject("/getData userstring " + name);
+							//client.writer.writeObject("/SIGNIN " + name + " " + password);
 							client.writer.flush();
 							enterNameField.clear();
 							enterPasswordField.clear();
@@ -290,6 +299,7 @@ public class ClientMain extends Application {
 										temp4User = cr;
 										client.writer.writeObject("/getData user " 
 												+ cr.otherMember(userNum));
+										client.writer.flush();
 									}
 									Platform.runLater(new Runnable() {
 										@Override
@@ -311,6 +321,7 @@ public class ClientMain extends Application {
 													temp4User = cr;
 													client.writer.writeObject("/getData user "
 															+ cr.otherMember(userNum));
+													client.writer.flush();
 												}
 											} catch (IOException e) {
 												e.printStackTrace();
@@ -326,9 +337,11 @@ public class ClientMain extends Application {
 									if (tab == null) {
 										temp = msg;
 										client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+										client.writer.flush();
 									} else {
 										temp4User = msg;
 										client.writer.writeObject("/getData user " + msg.getUserNum());
+										client.writer.flush();
 									}
 								}
 							} else if (message instanceof Message) {
@@ -337,9 +350,11 @@ public class ClientMain extends Application {
 								if (tab == null) {
 									temp = msg;
 									client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
+									client.writer.flush();
 								} else {
 									temp4User = msg;
 									client.writer.writeObject("/getData user " + msg.getUserNum());
+									client.writer.flush();
 								}
 							} else if (message instanceof User) {
 								User user = (User) message;
@@ -350,6 +365,13 @@ public class ClientMain extends Application {
 										String mesg = user.getName() + ": " + msg.getMsg();
 										TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
 										ta.appendText("\n" + mesg);
+									}
+								} else if (temp4User != null && temp4User instanceof String) {
+									String nm = (String) temp4User;
+									temp4User = null;
+									if (user.getName().equals(nm)) {
+										client.writer.writeObject("/SIGNIN " + loginName + " " + loginPassword);
+										client.writer.flush();
 									}
 								} else if (temp4User != null && temp4User instanceof Chatroom) {
 									Chatroom cr = (Chatroom) temp4User;
