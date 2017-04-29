@@ -1,9 +1,22 @@
 package assignment7;
 
+/* Chat Room ClientMain.java
+ * EE422C Project 7 submission by
+ * Timberlon Gray
+ * tg22698
+ * 16235
+ * Raiyan Chowdhury
+ * rac4444
+ * 16235
+ * Slip days used: <1>
+ * Spring 2017
+ */
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -70,6 +83,7 @@ public class ClientMain extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		ClientMain client = new ClientMain();
 		
+		//ensures that a client logs out when disconnected from the server
 		Platform.setImplicitExit(true);
 		primaryStage.setOnCloseRequest((ae) -> {
 			try {
@@ -271,7 +285,8 @@ public class ClientMain extends Application {
 		// sets up connection with server
 		try {
 			@SuppressWarnings("resource")
-			Socket socket = new Socket("127.0.0.1", 5000);
+			Socket socket = new Socket(InetAddress.getLocalHost().getHostAddress(), 5000);
+			//Socket socket = new Socket("2602:302:d1bc:fbd0:ccfa:2818:aca0:9ac4", 5000);
 			client.reader = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			client.writer = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("connected");
@@ -281,6 +296,13 @@ public class ClientMain extends Application {
 					Object message;
 					try {
 						while ((message = client.reader.readObject()) != null) {
+							/*
+							 * If the client receives a chatroom, a tab is created for said 
+							 * chatroom so that messages can be sent/received through it. 
+							 * Chatroom receives a generic name that can be changed later, with
+							 * the exception of private messages, which share a name with the user
+							 * being messaged.
+							 */
 							if (message instanceof Chatroom) {
 								Chatroom cr = (Chatroom) message;
 								Tab crTab = tabs.get(cr.getChatroomNum());
@@ -344,6 +366,10 @@ public class ClientMain extends Application {
 										client.writer.flush();
 									}
 								}
+								/*
+								 * When a message is sent, the client requests appropriate data in order
+								 * to properly display the message. 
+								 */
 							} else if (message instanceof Message) {
 								Message msg = (Message) message;
 								Tab tab = tabs.get(msg.getChatroomNum());
@@ -356,6 +382,11 @@ public class ClientMain extends Application {
 									client.writer.writeObject("/getData user " + msg.getUserNum());
 									client.writer.flush();
 								}
+								/*
+								 * User data is requested in order to either display a message properly,
+								 * allow the client data to update appropriately for logins, or set up
+								 * a private message with another user.
+								 */
 							} else if (message instanceof User) {
 								User user_ = (User) message;
 								if (temp4User != null && temp4User instanceof Message) {
@@ -364,7 +395,8 @@ public class ClientMain extends Application {
 									if (user_.getUserNum() == msg.getUserNum()) {
 										String mesg = user_.getName() + ": " + msg.getMsg();
 										TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
-										ta.appendText("\n" + mesg);
+										//ta.appendText("\n" + mesg);
+										ta.appendText(mesg + "\n");
 									}
 								} else if (temp4User != null && temp4User instanceof String) {
 									String nm = (String) temp4User;
@@ -418,6 +450,12 @@ public class ClientMain extends Application {
 		primaryStage.setScene(new Scene(pane, 1000, 700));
 		primaryStage.show();
 	}
+	/**
+	 * This method processes confirmations sent by the server after the client requests
+	 * something of it. It either updates user info upon registration/login, or displays
+	 * error messages if something went wrong on the server side.
+	 * @param message sent by the server
+	 */
 	private void processString(String message) {
 		String[] split_msg = ((String)message).split(" ");
 		if (split_msg[0].equals("registered")) {
@@ -440,6 +478,9 @@ public class ClientMain extends Application {
 			System.out.println("String input not recognized as command. Fix later.");
 		}
 	}
+	/**
+	 * This closes the login screen and opens the chat UI after a client logs in.
+	 */
 	public void closeLoginScreen() {
 		registerBtn.setVisible(false);
 		signIn.setVisible(false);
@@ -455,6 +496,9 @@ public class ClientMain extends Application {
 		loginError.setText("");
 		loginError.setVisible(false);
 	}
+	/**
+	 * Brings back the login screen after a client logs out.
+	 */
 	public void openLoginScreen() {
 		registerBtn.setVisible(true);
 		signIn.setVisible(true);
@@ -470,6 +514,11 @@ public class ClientMain extends Application {
 		loginError.setVisible(true);
 		tabPane.setVisible(false);
 	}
+	/**
+	 * This creates a message to be sent in the form of a Message object.
+	 * It uses the user-input string as input.
+	 * @return a Message, or null if the user has not input anything
+	 */
 	public Message createMessage() {
 		int currentChatroom = 0;
 		Tab tab = tabPane.getSelectionModel().getSelectedItem();

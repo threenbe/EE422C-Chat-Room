@@ -1,5 +1,17 @@
 package assignment7;
 
+/* Chat Room ServerMain.java
+ * EE422C Project 7 submission by
+ * Timberlon Gray
+ * tg22698
+ * 16235
+ * Raiyan Chowdhury
+ * rac4444
+ * 16235
+ * Slip days used: <1>
+ * Spring 2017
+ */
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
