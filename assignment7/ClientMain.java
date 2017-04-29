@@ -283,7 +283,14 @@ public class ClientMain extends Application {
 									textArea.setStyle("-fx-control-inner-background: #555555; -fx-font-family: verdana; -fx-text-fill: #e5e4e2");
 									textArea.setEditable(false);
 									tab.setContent(textArea);
-									tab.setText(cr.getName());
+									//tab.setText(cr.getName());
+									if (cr.numMembers() != 2) {
+										tab.setText(cr.getName());
+									} else {
+										temp4User = cr;
+										client.writer.writeObject("/getData user " 
+												+ cr.otherMember(userNum));
+									}
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
