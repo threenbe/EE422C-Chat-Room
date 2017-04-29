@@ -14,7 +14,7 @@ public class ServerMain extends Observable {
 	private static ArrayList<String> passwords;
 	private static ArrayList<Chatroom> chatrooms;
 	private static ArrayList<ClientObserver> observers;
-	
+	// Values used for creating User and Chatroom IDs.
 	private int usersCount = 0;
 	private int chatroomsCount = 1;
 	
@@ -47,7 +47,7 @@ public class ServerMain extends Observable {
 					try {
 						ObjectInputStream reader = new ObjectInputStream(
 								new BufferedInputStream(clientSocket.getInputStream()));
-						// Constantly checks for messages
+						// Periodically checks for messages
 						while ((message = reader.readObject()) != null) {
 							processMessage(message, writer); 
 						}
@@ -63,11 +63,18 @@ public class ServerMain extends Observable {
 			this.addObserver(writer);
 		}
 	}
+	/**
+	 * Primary code for processing messages that are sent to the server.
+	 * @param message - The Object passed to the server.
+	 * @param writer - The ClientObserver that communicates with the client.
+	 */
 	private void processMessage(Object message, ClientObserver writer) {
+		// Strings are used for background client-server communication.
 		if (message instanceof String) {
 			try {
 				String msg = (String) message;
 				String[] msg_split = msg.split(" ");
+				// Creates new user
 				if (msg_split[0].equals("/SIGNUP")) {
 					for (User u : users) {
 						if (u.getName().equals(msg_split[1])) {
@@ -86,6 +93,7 @@ public class ServerMain extends Observable {
 					writer.writeObject("registered " + userNum + " " + msg_split[1]);
 					writer.flush();
 					return;
+				// Client logs in as existing user
 				} else if (msg_split[0].equals("/SIGNIN")) {
 					String this_name = msg_split[1];
 					String this_password = msg_split[2];
@@ -119,6 +127,7 @@ public class ServerMain extends Observable {
 						writer.flush();
 						return;
 					}
+				// Client logs out
 				} else if (msg_split[0].equals("/LOGOUT")) {
 					for (User u : users) {
 						if (u.getName().equals(getUserName(Integer.parseInt(msg_split[1])))) {
@@ -136,14 +145,19 @@ public class ServerMain extends Observable {
 							return;
 						}
 					}
+				// Client requests data
 				} else if (msg_split[0].equals("/getData")) {
+					// Requests chatroom
 					if (msg_split[1].equals("chatroom")) {
 						writer.writeObject(chatrooms.get(Integer.parseInt(msg_split[2])));
 						writer.flush();
+					// requests User based on string
 					} else if (msg_split[1].equals("userstring")) {
 						int id = getUserId(msg_split[2]);
-						writer.writeObject(users.get(id));
+						if (id >= 0) writer.writeObject(users.get(id));
+						else writer.writeObject("name-not-found ");
 						writer.flush();
+					// requests User based on ID
 					} else if (msg_split[1].equals("user")) {
 						writer.writeObject(users.get(Integer.parseInt(msg_split[2])));
 						writer.flush();
@@ -156,10 +170,13 @@ public class ServerMain extends Observable {
 				e.printStackTrace();
 			}
 			return;
+		// Messages are usually used for actual messages, although several
+		// additional commands exist.
 		} else if (message instanceof Message) {
 			Message msg = (Message) message;
 			String[] tokens = msg.getMsg().split(" ");
 			String s = tokens[0];
+			// creates new chatroom
 			if (s.equals("/createChatroom")
 			 || s.equals("/newroom")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Chatroom #" + chatroomsCount, "");
@@ -171,6 +188,7 @@ public class ServerMain extends Observable {
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
 				cr.sendChatroom();
+			// creates a PM chatbox
 			} else if (s.equals("/pm")
 					|| s.equals("message")) {
 				Chatroom cr = new Chatroom(chatroomsCount, "Placeholder", "");
@@ -181,6 +199,7 @@ public class ServerMain extends Observable {
 				chatrooms.add(chatroomsCount, cr);
 				chatroomsCount++;
 				cr.sendChatroom();
+			// adds members to a chatroom
 			} else if (s.equals("/addMember")
 					|| s.equals("/addMembers")) {
 				int user;
@@ -192,6 +211,7 @@ public class ServerMain extends Observable {
 					}
 				}
 				cr.sendChatroom();
+			// changes name of chatroom
 			} else if (s.equals("/changeChatroomName")
 					|| s.equals("/chatname")
 					|| s.equals("/roomname")) {
@@ -202,6 +222,7 @@ public class ServerMain extends Observable {
 						cr.sendChatroom();
 					}
 				}
+			// changes nickname of person
 			} else if (s.equals("/changeNickname")
 					|| s.equals("/nick")
 					|| s.equals("/changename")) {
@@ -209,6 +230,7 @@ public class ServerMain extends Observable {
 					users.get(msg.getUserNum()).setName(tokens[1]);
 				}
 				// TODO make sure chatrooms and users see this update
+			// adds users to friendlist
 			} else if (s.equals("/addFriend")
 					|| s.equals("/addFriends")
 					|| s.equals("/add")) {
@@ -217,6 +239,7 @@ public class ServerMain extends Observable {
 					if (id >= 0) users.get(msg.getUserNum()).addFriend(id);
 				}
 				// TODO make sure users see this update
+			// removes self from chatroom
 			} else if (s.equals("/leaveChatroom")
 					|| s.equals("/leave")) {
 				int cr = msg.getChatroomNum();
@@ -228,6 +251,11 @@ public class ServerMain extends Observable {
 			System.out.println("Unfamiliar object type input by client. Input ignored. Fix later.");
 		}
 	}
+	/**
+	 * Returns ID of user.
+	 * @param name  - name of user
+	 * @return - ID
+	 */
 	public int getUserId(String name) {
 		for (User u : users) {
 			if (u.getName().equals(name)) {
@@ -236,14 +264,29 @@ public class ServerMain extends Observable {
 		}
 		return -1;
 	}
+	/**
+	 * Returns name of user.
+	 * @param id - id of user
+	 * @return name as a string
+	 */
 	public static String getUserName(int id) {
 		if (users.size() <= id) return null;
 		return users.get(id).getName();
 	}
+	/**
+	 * Returns name of chatroom.
+	 * @param id - id of chatroom
+	 * @return name as a string
+	 */
 	public static String getChatroomName(int id) {
 		if (chatrooms.size() <= id) return null;
 		return chatrooms.get(id).getName();
 	}
+	/**
+	 * Returns observer that is related to a user.
+	 * @param id - id of user
+	 * @return the ClientObserver that is related to it.
+	 */
 	public static ClientObserver getObserver(int id) {
 		return observers.get(id);
 	}

@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ClientObserver extends ObjectOutputStream /*PrintWriter*/ implements Observer {
+public class ClientObserver extends ObjectOutputStream implements Observer {
 	public ClientObserver(OutputStream out) throws IOException {
 		super(out);
 	}

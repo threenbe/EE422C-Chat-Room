@@ -1,19 +1,22 @@
 package assignment7;
 
 import java.io.Serializable;
-
+/**
+ * A Message stores the chatroom the text was sent in,
+ * the user that sent it, and of course the actual text.
+ */
 public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int chatroomNum;
-	private int userNum; // user that sent the message
+	private int userNum;
 	private String msg;
-	
+	// Constructor
 	public Message(int cn, int un, String mg) {
 		setChatroomNum(cn);
 		setUserNum(un);
 		setMsg(mg);
 	}
-
+	// These functions are self-explanatory
 	public int getChatroomNum() {
 		return chatroomNum;
 	}
