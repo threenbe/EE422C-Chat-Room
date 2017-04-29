@@ -43,6 +43,13 @@ public class Chatroom extends Observable implements Serializable {
 		}
 		return false;
 	}
+	public int numMembers() {
+		return members.size();
+	}
+	public int otherMember(int id) {
+		if (id == members.get(0)) return members.get(1);
+		else return members.get(0);
+	}
 	public String getName() {
 		return name;
 	}

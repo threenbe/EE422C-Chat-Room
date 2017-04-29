@@ -40,7 +40,7 @@ public class ClientMain extends Application {
 	private HashMap<Integer, Tab> tabs = new HashMap<Integer, Tab>();
 	// experimental
 	private Message temp;
-	private Message tempMsg;
+	private Object temp4User;
 	
 	// all JavaFX UI stuff. MAKE NEW ONES HERE
 	Label text = new Label();
@@ -297,7 +297,18 @@ public class ClientMain extends Application {
 									Platform.runLater(new Runnable() {
 										@Override
 										public void run() {
-											crTab_.setText(cr.getName());
+											try {
+												if (cr.numMembers() != 2) {
+													crTab_.setText(cr.getName());
+												} else {
+													temp4User = cr;
+													client.writer.writeObject("/getData user "
+															+ cr.otherMember(userNum));
+												}
+											} catch (IOException e) {
+												e.printStackTrace();
+											}
+												
 										}
 									});
 								}
@@ -309,7 +320,7 @@ public class ClientMain extends Application {
 										temp = msg;
 										client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
 									} else {
-										tempMsg = msg;
+										temp4User = msg;
 										client.writer.writeObject("/getData user " + msg.getUserNum());
 									}
 								}
@@ -320,17 +331,28 @@ public class ClientMain extends Application {
 									temp = msg;
 									client.writer.writeObject("/getData chatroom " + msg.getChatroomNum());
 								} else {
-									tempMsg = msg;
+									temp4User = msg;
 									client.writer.writeObject("/getData user " + msg.getUserNum());
 								}
 							} else if (message instanceof User) {
 								User user = (User) message;
-								Message msg = tempMsg;
-								tempMsg = null;
-								if (user.getUserNum() == msg.getUserNum()) {
-									String mesg = user.getName() + ": " + msg.getMsg();
-									TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
-									ta.appendText("\n" + mesg);
+								if (temp4User != null && temp4User instanceof Message) {
+									Message msg =  (Message) temp4User;
+									temp4User = null;
+									if (user.getUserNum() == msg.getUserNum()) {
+										String mesg = user.getName() + ": " + msg.getMsg();
+										TextArea ta = (TextArea) tabs.get(msg.getChatroomNum()).getContent();
+										ta.appendText("\n" + mesg);
+									}
+								} else if (temp4User != null && temp4User instanceof Chatroom) {
+									Chatroom cr = (Chatroom) temp4User;
+									final Tab crTab = tabs.get(cr.getChatroomNum());
+									Platform.runLater(new Runnable() {
+										@Override
+										public void run() {
+											crTab.setText(user.getName());	
+										}
+									});
 								}
 							} else if (message instanceof String) {
 								String msg = (String) message; 
