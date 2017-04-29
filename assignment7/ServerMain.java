@@ -197,8 +197,10 @@ public class ServerMain extends Observable {
 					|| s.equals("/roomname")) {
 				if (tokens.length > 1) {
 					Chatroom cr = chatrooms.get(msg.getChatroomNum());
-					cr.setName(tokens[1]);
-					cr.sendChatroom();
+					if (!cr.isPM()) {
+						cr.setName(tokens[1]);
+						cr.sendChatroom();
+					}
 				}
 			} else if (s.equals("/changeNickname")
 					|| s.equals("/nick")
